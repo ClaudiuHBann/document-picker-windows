@@ -1,6 +1,5 @@
 import NativeDocumentPickerWindows from './spec/NativeDocumentPickerWindows';
 
-import { Platform } from 'react-native';
 import { type PredefinedFileTypes, types } from './fileTypes';
 import type {
   BookmarkingResponse,
@@ -9,7 +8,6 @@ import type {
   PresentationStyle,
   TransitionStyle,
 } from './types';
-import { safeValidate } from './validateTypes';
 
 /**
  * Base options object for the document picker.
@@ -151,11 +149,7 @@ export async function pick<O extends DocumentPickerOptions>(
     NativeDocumentPickerWindows.pick(newOpts);
   const awaitedResult = await response;
   for (const res of awaitedResult) {
-    if (Platform.OS === 'android') {
-      res.hasRequestedType = safeValidate(newOpts.type, res);
-    } else {
-      res.hasRequestedType = true;
-    }
+    res.hasRequestedType = true;
   }
 
   return awaitedResult as unknown as PickResponse<O>;

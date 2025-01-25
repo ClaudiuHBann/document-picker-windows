@@ -47,10 +47,38 @@ struct Picker
                                ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
   private:
+    Windows::Storage::Pickers::FileOpenPicker CreateFileOpenPicker(const ::React::JSValue &aOptions);
+    Windows::Storage::Pickers::FileSavePicker CreateFileSavePicker(const ::React::JSValue &aOptions);
     Windows::Storage::Pickers::FolderPicker CreateFolderPicker(const ::React::JSValue &aOptions);
 
+    Windows::Foundation::IAsyncAction pickInternal(::React::JSValue &&aOptions,
+                                                   ::React::ReactPromise<::React::JSValueArray> &&aResult) noexcept;
+    Windows::Foundation::IAsyncAction saveDocumentInternal(::React::JSValue &&aOptions,
+                                                           ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
     Windows::Foundation::IAsyncAction pickDirectoryInternal(::React::JSValue &&aOptions,
                                                             ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
+
+    template <typename Type>
+    void AsyncActionCompletedHandler(const Windows::Foundation::IAsyncAction &aAction,
+                                     const Windows::Foundation::AsyncStatus &aStatus,
+                                     ::React::ReactPromise<Type> &&aPromise) noexcept
+    {
+        if (aStatus != Windows::Foundation::AsyncStatus::Error)
+        {
+            return;
+        }
+
+        const auto errorCode = aAction.ErrorCode().value;
+        const auto errorMessage = std::system_category().message(errorCode);
+
+        Microsoft::ReactNative::ReactError reactError{
+            .Message = std::format("HRESULT 0x{:}: {}", errorCode, errorMessage),
+        };
+
+        aPromise.Reject(std::move(reactError));
+    }
+
+    ::React::JSValueObject MakeDocumentPickerResponse(const Windows::Storage::StorageFile& aStorageFile);
 
   private:
     React::ReactContext mContext;

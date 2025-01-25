@@ -1,6 +1,5 @@
 import NativeDocumentPickerWindows from './spec/NativeDocumentPickerWindows';
 
-import { Platform } from 'react-native';
 import type { DocumentPickerResponse, NonEmptyArray } from './types';
 
 /**
@@ -69,23 +68,9 @@ export async function saveDocuments(
   options: SaveDocumentsOptions
 ): Promise<NonEmptyArray<SaveDocumentsResponse>> {
   const writeDocumentResponse = await (async () => {
-    if (Platform.OS === 'android') {
-      const length = options.sourceUris.length;
-      if (length > 1) {
-        console.warn(`DocumentPicker.saveDocuments: Android only allows to save one file at a time.\n
-      You provided an array with ${length} entries.`);
-      }
-      // making this division into 2 calls might be an overkill... but who knows
-      const objectWithSingleUri =
-        await NativeDocumentPickerWindows.saveDocument(options);
-      const response =
-        await NativeDocumentPickerWindows.writeDocuments(objectWithSingleUri);
-      return response as NonEmptyArray<DocumentPickerResponse>;
-    } else {
-      return NativeDocumentPickerWindows.writeDocuments(options) as Promise<
-        NonEmptyArray<DocumentPickerResponse>
-      >;
-    }
+    return NativeDocumentPickerWindows.writeDocuments(options) as Promise<
+      NonEmptyArray<DocumentPickerResponse>
+    >;
   })();
   return writeDocumentResponse.map(
     keepOnlySpecifiedFields

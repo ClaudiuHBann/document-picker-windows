@@ -2,10 +2,21 @@
 
 #include "Picker.h"
 
+namespace
+{
+constexpr auto kAllowMultiSelection = "allowMultiSelection"sv; // boolean
+constexpr auto kUri = "uri"sv;                                 // file path
+constexpr auto kName = "name"sv;                               // file name with extension
+constexpr auto kSize = "size"sv;                               // file size in bytes
+constexpr auto kIsVirtual = "isVirtual"sv;                     // always false
+constexpr auto kHasRequestedType = "hasRequestedType"sv;       // always false
+} // namespace
+
 namespace winrt::Picker
 {
 using namespace React;
 using namespace Windows::Foundation;
+using namespace Windows::Storage;
 using namespace Windows::Storage::Pickers;
 
 void Picker::Initialize(ReactContext const &aReactContext) noexcept
@@ -13,22 +24,97 @@ void Picker::Initialize(ReactContext const &aReactContext) noexcept
     mContext = aReactContext;
 }
 
+FileOpenPicker Picker::CreateFileOpenPicker(const JSValue &aOptions)
+{
+    FileOpenPicker picker;
+
+    const auto hwnd = ReactCoreInjection::GetTopLevelWindowId(mContext.Properties().Handle());
+    picker.as<IInitializeWithWindow>()->Initialize(reinterpret_cast<HWND>(hwnd));
+
+    // TODO: use type(s) property from aOptions to filter the file types
+    // for (const auto &filter : aOptions.filters)
+    // {
+    //     picker.FileTypeFilter().Append(to_hstring(filter));
+    // }
+    picker.FileTypeFilter().Append(L"*");
+
+    picker.SuggestedStartLocation(PickerLocationId::Desktop);
+    picker.ViewMode(PickerViewMode::List);
+
+    return picker;
+}
+
+JSValueObject Picker::MakeDocumentPickerResponse(const StorageFile &aStorageFile)
+{
+    const std::filesystem::path path(to_string(aStorageFile.Path()));
+
+    JSValueObject documentPickerResponse;
+
+    documentPickerResponse[kUri] = path.string();
+    documentPickerResponse[kName] = path.filename().string();
+    documentPickerResponse[kSize] = std::filesystem::file_size(path);
+    documentPickerResponse[kIsVirtual] = false;
+    documentPickerResponse[kHasRequestedType] = false;
+
+    return documentPickerResponse;
+}
+
+IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray> &&aResult) noexcept
+{
+    auto picker(CreateFileOpenPicker(aOptions));
+    JSValueArray files;
+
+    if (aOptions.Object()[kAllowMultiSelection].AsBoolean())
+    {
+        auto storageFiles(co_await picker.PickMultipleFilesAsync());
+        for (const auto &storageFile : storageFiles)
+        {
+            files.push_back(MakeDocumentPickerResponse(storageFile));
+        }
+    }
+    else
+    {
+        auto storageFile(co_await picker.PickSingleFileAsync());
+        if (storageFile)
+        {
+            files.push_back(MakeDocumentPickerResponse(storageFile));
+        }
+    }
+
+    capturedPromise.Resolve(std::move(files));
+}
+
 void Picker::pick(JSValue &&aOptions, ReactPromise<JSValueArray> &&aResult) noexcept
 {
-    UNREFERENCED_PARAMETER(aOptions);
-    UNREFERENCED_PARAMETER(aResult);
+    mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult = std::move(aResult)]() mutable {
+        pickInternal(std::move(aOptions), std::move(aResult))
+            .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
+                AsyncActionCompletedHandler(aAction, aStatus, std::move(aResult));
+            });
+    });
+}
+
+FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &aOptions)
+{
+}
+
+IAsyncAction Picker::saveDocumentInternal(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
+{
 }
 
 void Picker::saveDocument(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
 {
-    UNREFERENCED_PARAMETER(aOptions);
-    UNREFERENCED_PARAMETER(aResult);
+    mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult = std::move(aResult)]() mutable {
+        saveDocumentInternal(std::move(aOptions), std::move(aResult))
+            .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
+                AsyncActionCompletedHandler(aAction, aStatus, std::move(aResult));
+            });
+    });
 }
 
-void Picker::writeDocuments(JSValue &&aOptions, ReactPromise<std::vector<JSValue>> &&aResult) noexcept
+void Picker::writeDocuments(JSValue &&, ReactPromise<std::vector<JSValue>> &&aResult) noexcept
 {
-    UNREFERENCED_PARAMETER(aOptions);
-    UNREFERENCED_PARAMETER(aResult);
+    aResult.Reject("Not implemented!");
 }
 
 FolderPicker Picker::CreateFolderPicker(const JSValue &aOptions)
@@ -39,10 +125,11 @@ FolderPicker Picker::CreateFolderPicker(const JSValue &aOptions)
     picker.as<IInitializeWithWindow>()->Initialize(reinterpret_cast<HWND>(hwnd));
 
     // TODO: use type(s) property from aOptions to filter the file types
-    // for (const auto &filter : aOptions)
+    // for (const auto &filter : aOptions.filters)
     // {
     //     picker.FileTypeFilter().Append(to_hstring(filter));
     // }
+    picker.FileTypeFilter().Append(L"*");
 
     picker.SuggestedStartLocation(PickerLocationId::Downloads);
     picker.ViewMode(PickerViewMode::List);
@@ -52,39 +139,24 @@ FolderPicker Picker::CreateFolderPicker(const JSValue &aOptions)
 
 IAsyncAction Picker::pickDirectoryInternal(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
 {
-    // keep promise alive
-    auto capturedPromise = aResult;
-
     auto picker(CreateFolderPicker(aOptions));
     JSValueObject folders;
 
     auto storageFolder(co_await picker.PickSingleFolderAsync());
     if (storageFolder)
     {
-        folders["uri"] = to_string(storageFolder.Path());
+        folders[kUri] = to_string(storageFolder.Path());
     }
 
-    capturedPromise.Resolve(std::move(folders));
+    aResult.Resolve(std::move(folders));
 }
 
 void Picker::pickDirectory(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
 {
     mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult = std::move(aResult)]() mutable {
         pickDirectoryInternal(std::move(aOptions), std::move(aResult))
-            .Completed([aResult](const auto &aAction, const auto aStatus) {
-                if (aStatus != AsyncStatus::Error)
-                {
-                    return;
-                }
-
-                const auto errorCode = aAction.ErrorCode().value;
-                const auto errorMessage = std::system_category().message(errorCode);
-
-                ReactError reactError{
-                    .Message = std::format("HRESULT 0x{:}: {}", errorCode, errorMessage),
-                };
-
-                aPromise.Reject(std::move(reactError));
+            .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
+                AsyncActionCompletedHandler(aAction, aStatus, std::move(aResult));
             });
     });
 }

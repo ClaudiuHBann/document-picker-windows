@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import NativeDocumentPickerWindows from './spec/NativeDocumentPickerWindows';
 import {
   type BookmarkingResponse,
@@ -78,29 +77,11 @@ export async function pickDirectory<O extends DirectoryPickerOptions>(
   options?: O
 ): PickDirectoryResponse<O> {
   const optionsOverride = (() => {
-    if (Platform.OS === 'ios') {
-      return {
-        ...options,
-        mode: 'open',
-        allowMultiSelection: false,
-        type: ['public.folder'],
-      };
-    } else if (Platform.OS === 'android') {
-      return {
-        // technically, "mode" is ignored here, and we shouldn't need to specify anything but the PickOptions data class
-        // requires mode to be set
-        mode: 'open',
-        ...options,
-      };
-    } else if (Platform.OS === 'windows') {
-      return {
-        ...options,
-        allowMultiSelection: false,
-        mode: 'open',
-      };
-    } else {
-      return {};
-    }
+    return {
+      ...options,
+      allowMultiSelection: false,
+      mode: 'open',
+    };
   })();
   return NativeDocumentPickerWindows.pickDirectory(
     optionsOverride
