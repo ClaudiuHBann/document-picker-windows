@@ -10,6 +10,8 @@ constexpr auto kName = "name"sv;                               // file name with
 constexpr auto kSize = "size"sv;                               // file size in bytes
 constexpr auto kIsVirtual = "isVirtual"sv;                     // always false
 constexpr auto kHasRequestedType = "hasRequestedType"sv;       // always false
+constexpr auto kSourceUris = "sourceUris"sv;                   // always file paths
+constexpr auto kFileName = "fileName"sv;                       // file name with extension
 } // namespace
 
 namespace winrt::Picker
@@ -94,14 +96,40 @@ void Picker::pick(JSValue &&aOptions, ReactPromise<JSValueArray> &&aResult) noex
     });
 }
 
-FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &)
+FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &aOptions)
 {
-    return nullptr;
+    FileSavePicker picker;
+
+    const auto hwnd = ReactCoreInjection::GetTopLevelWindowId(mContext.Properties().Handle());
+    picker.as<IInitializeWithWindow>()->Initialize(reinterpret_cast<HWND>(hwnd));
+
+    const auto fileName = aOptions[kFileName].TryGetString();
+    if (fileName)
+    {
+        const std::filesystem::path path(*fileName);
+
+        picker.SuggestedFileName(path.filename().stem().native());
+        picker.DefaultFileExtension(path.filename().extension().native());
+    }
+
+    picker.SuggestedStartLocation(PickerLocationId::Desktop);
+
+    return picker;
 }
 
-IAsyncAction Picker::saveDocumentInternal(JSValue &&, ReactPromise<JSValue> &&) noexcept
+IAsyncAction Picker::saveDocumentInternal(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
 {
-    co_return;
+    auto picker(CreateFileSavePicker(aOptions));
+    auto storageFile(co_await picker.PickSaveFileAsync());
+
+    const std::filesystem::path path(to_string(storageFile.Path()));
+
+    JSValueObject file;
+
+    file[kUri] = path.string();
+    file[kName] = path.filename().string();
+
+    aResult.Resolve(std::move(file));
 }
 
 void Picker::saveDocument(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
