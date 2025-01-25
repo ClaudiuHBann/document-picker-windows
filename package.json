@@ -20,35 +20,22 @@
   "files": [
     "src",
     "lib",
-    "android",
-    "ios",
     "cpp",
-    "*.podspec",
     "react-native.config.js",
-    "!ios/build",
-    "!android/build",
-    "!android/gradle",
-    "!android/gradlew",
-    "!android/gradlew.bat",
-    "!android/local.properties",
-    "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
     "!**/.*"
   ],
   "scripts": {
     "example": "yarn workspace @react-native-documents-windows/picker-example",
-    "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "clean": "del-cli lib",
     "prepare": "bob build",
     "release": "release-it"
   },
   "keywords": [
-    "react-native",
-    "ios",
-    "android"
+    "react-native"
   ],
   "repository": {
     "type": "git",
@@ -187,13 +174,6 @@
     "name": "RNRNDocumentPickerWindowsSpec",
     "type": "modules",
     "jsSrcsDir": "src",
-    "outputDir": {
-      "ios": "ios/generated",
-      "android": "android/generated"
-    },
-    "android": {
-      "javaPackageName": "com.reactnativedocumentswindows.picker"
-    },
     "includesGeneratedCode": true,
     "windows": {
       "namespace": "PickerCodegen",
