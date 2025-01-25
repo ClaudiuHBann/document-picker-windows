@@ -58,10 +58,10 @@ struct Picker
     Windows::Foundation::IAsyncAction pickDirectoryInternal(::React::JSValue &&aOptions,
                                                             ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
-    template <typename Type>
+    template <typename Promise>
+        requires std::derived_from<Promise, ::React::ReactPromiseBase>
     void AsyncActionCompletedHandler(const Windows::Foundation::IAsyncAction &aAction,
-                                     const Windows::Foundation::AsyncStatus &aStatus,
-                                     ::React::ReactPromise<Type> &&aPromise) noexcept
+                                     const Windows::Foundation::AsyncStatus &aStatus, Promise &&aPromise) noexcept
     {
         if (aStatus != Windows::Foundation::AsyncStatus::Error)
         {
@@ -78,7 +78,7 @@ struct Picker
         aPromise.Reject(std::move(reactError));
     }
 
-    ::React::JSValueObject MakeDocumentPickerResponse(const Windows::Storage::StorageFile& aStorageFile);
+    ::React::JSValueObject MakeDocumentPickerResponse(const Windows::Storage::StorageFile &aStorageFile);
 
   private:
     React::ReactContext mContext;

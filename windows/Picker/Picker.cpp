@@ -24,7 +24,7 @@ void Picker::Initialize(ReactContext const &aReactContext) noexcept
     mContext = aReactContext;
 }
 
-FileOpenPicker Picker::CreateFileOpenPicker(const JSValue &aOptions)
+FileOpenPicker Picker::CreateFileOpenPicker(const JSValue &)
 {
     FileOpenPicker picker;
 
@@ -64,7 +64,7 @@ IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray>
     auto picker(CreateFileOpenPicker(aOptions));
     JSValueArray files;
 
-    if (aOptions.Object()[kAllowMultiSelection].AsBoolean())
+    if (aOptions[kAllowMultiSelection].AsBoolean())
     {
         auto storageFiles(co_await picker.PickMultipleFilesAsync());
         for (const auto &storageFile : storageFiles)
@@ -81,7 +81,7 @@ IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray>
         }
     }
 
-    capturedPromise.Resolve(std::move(files));
+    aResult.Resolve(std::move(files));
 }
 
 void Picker::pick(JSValue &&aOptions, ReactPromise<JSValueArray> &&aResult) noexcept
@@ -94,12 +94,14 @@ void Picker::pick(JSValue &&aOptions, ReactPromise<JSValueArray> &&aResult) noex
     });
 }
 
-FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &aOptions)
+FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &)
 {
+    return nullptr;
 }
 
-IAsyncAction Picker::saveDocumentInternal(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
+IAsyncAction Picker::saveDocumentInternal(JSValue &&, ReactPromise<JSValue> &&) noexcept
 {
+    co_return;
 }
 
 void Picker::saveDocument(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
@@ -117,7 +119,7 @@ void Picker::writeDocuments(JSValue &&, ReactPromise<std::vector<JSValue>> &&aRe
     aResult.Reject("Not implemented!");
 }
 
-FolderPicker Picker::CreateFolderPicker(const JSValue &aOptions)
+FolderPicker Picker::CreateFolderPicker(const JSValue &)
 {
     FolderPicker picker;
 
@@ -172,7 +174,7 @@ JSValue Picker::isKnownType(std::string, std::string) noexcept
     return nullptr;
 }
 
-void Picker::releaseSecureAccess(std::vector<std::string> const &aURIs, ReactPromise<JSValue> &&aResult) noexcept
+void Picker::releaseSecureAccess(std::vector<std::string> const &, ReactPromise<JSValue> &&aResult) noexcept
 {
     aResult.Resolve(nullptr);
 }
