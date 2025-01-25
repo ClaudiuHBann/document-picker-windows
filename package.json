@@ -81,6 +81,7 @@
     "react": "18.3.1",
     "react-native": "0.76.5",
     "react-native-builder-bob": "^0.32.0",
+    "react-native-windows": "^0.76.5",
     "release-it": "^17.10.0",
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
@@ -193,11 +194,23 @@
     "android": {
       "javaPackageName": "com.reactnativedocumentswindows.picker"
     },
-    "includesGeneratedCode": true
+    "includesGeneratedCode": true,
+    "windows": {
+      "namespace": "PickerCodegen",
+      "outputDirectory": "windows/Picker/codegen",
+      "separateDataTypes": true
+    }
   },
   "create-react-native-library": {
     "type": "turbo-module",
     "languages": "kotlin-objc",
     "version": "0.45.5"
+  },
+  "react-native-windows": {
+    "init-windows": {
+      "name": "Picker",
+      "namespace": "Picker",
+      "template": "cpp-lib"
+    }
   }
 }
