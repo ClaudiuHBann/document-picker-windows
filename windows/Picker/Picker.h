@@ -1,31 +1,28 @@
 #pragma once
 
-#include "pch.h"
-#include "resource.h"
-
-#if __has_include("codegen/NativePickerDataTypes.g.h")
-  #include "codegen/NativePickerDataTypes.g.h"
+#if __has_include("codegen/NativeRNDocumentPickerWindowsDataTypes.g.h")
+#include "codegen/NativeRNDocumentPickerWindowsDataTypes.g.h"
 #endif
-#include "codegen/NativePickerSpec.g.h"
+#include "codegen/NativeRNDocumentPickerWindowsSpec.g.h"
 
 #include "NativeModules.h"
 
 namespace winrt::Picker
 {
 
-REACT_MODULE(Picker)
+REACT_MODULE(Picker, L"RNDocumentPickerWindows")
 struct Picker
 {
-  using ModuleSpec = PickerCodegen::PickerSpec;
+    using ModuleSpec = PickerCodegen::RNDocumentPickerWindowsSpec;
 
-  REACT_INIT(Initialize)
-  void Initialize(React::ReactContext const &reactContext) noexcept;
+    REACT_INIT(Initialize)
+    void Initialize(React::ReactContext const &aReactContext) noexcept;
 
-  REACT_SYNC_METHOD(multiply)
-  double multiply(double a, double b) noexcept;
+    REACT_SYNC_METHOD(multiply)
+    double multiply(double a, double b) noexcept;
 
-private:
-  React::ReactContext m_context;
+  private:
+    React::ReactContext mContext;
 };
 
 } // namespace winrt::Picker

@@ -7,14 +7,12 @@
 
 #include "Picker.h"
 
-using namespace winrt::Microsoft::ReactNative;
-
 namespace winrt::Picker::implementation
 {
+using namespace Microsoft::ReactNative;
 
-void ReactPackageProvider::CreatePackage(IReactPackageBuilder const &packageBuilder) noexcept
+void ReactPackageProvider::CreatePackage(IReactPackageBuilder const &aPackageBuilder) noexcept
 {
-  AddAttributedModules(packageBuilder, true);
+    AddAttributedModules(aPackageBuilder, true);
 }
-
 } // namespace winrt::Picker::implementation

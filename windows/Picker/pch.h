@@ -1,30 +1,32 @@
-// pch.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
 #pragma once
 
-#include "targetver.h"
+#define _SILENCE_ALL_CXX23_DEPRECATION_WARNINGS 1
+
+// windows
+
+#include <SDKDDKVer.h>
 
 #define NOMINMAX 1
 #define WIN32_LEAN_AND_MEAN 1
 #define WINRT_LEAN_AND_MEAN 1
 
-// Windows Header Files
-#include <windows.h>
+#include <Windows.h>
 #undef GetCurrentTime
-#include <unknwn.h>
+#include <ShObjIdl_core.h>
 
-// WinRT Header Files
-#include <winrt/base.h>
-#include <CppWinRTIncludes.h>
+// winrt
 #include <winrt/Microsoft.ReactNative.h>
+#include <winrt/Windows.Storage.Pickers.h>
 
-// C RunTime Header Files
-#include <malloc.h>
-#include <memory.h>
-#include <stdlib.h>
-#include <tchar.h>
+// rnw
+#include <ReactPromise.h>
 
-// Reference additional headers your project requires here
+// std
+#include <coroutine>
+#include <filesystem>
+#include <span>
+#include <string>
+#include <string_view>
+
+using namespace std::string_literals;
+using namespace std::string_view_literals;
