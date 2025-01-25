@@ -225,7 +225,7 @@ export function OpenExamples() {
           {results.flat().map((result, index) => {
             return (
               <View key={index}>
-                <Text>{result}</Text>
+                <Text>{JSON.stringify(result)}</Text>
               </View>
             );
           })}

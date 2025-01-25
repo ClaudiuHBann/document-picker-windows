@@ -178,7 +178,7 @@ export function SaveAsExamples() {
           {results.flat().map((result: any, index) => {
             return (
               <View key={index}>
-                <Text>{result}</Text>
+                <Text>{JSON.stringify(result)}</Text>
               </View>
             );
           })}

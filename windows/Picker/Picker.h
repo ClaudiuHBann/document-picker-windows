@@ -52,16 +52,16 @@ struct Picker
     Windows::Storage::Pickers::FolderPicker CreateFolderPicker(const ::React::JSValue &aOptions);
 
     Windows::Foundation::IAsyncAction pickInternal(::React::JSValue &&aOptions,
-                                                   ::React::ReactPromise<::React::JSValueArray> &&aResult) noexcept;
+                                                   ::React::ReactPromise<::React::JSValueArray> aResult) noexcept;
     Windows::Foundation::IAsyncAction saveDocumentInternal(::React::JSValue &&aOptions,
-                                                           ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
+                                                           ::React::ReactPromise<::React::JSValue> aResult) noexcept;
     Windows::Foundation::IAsyncAction pickDirectoryInternal(::React::JSValue &&aOptions,
-                                                            ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
+                                                            ::React::ReactPromise<::React::JSValue> aResult) noexcept;
 
     template <typename Promise>
         requires std::derived_from<Promise, ::React::ReactPromiseBase>
     void AsyncActionCompletedHandler(const Windows::Foundation::IAsyncAction &aAction,
-                                     const Windows::Foundation::AsyncStatus &aStatus, Promise &&aPromise) noexcept
+                                     const Windows::Foundation::AsyncStatus &aStatus, Promise aPromise) noexcept
     {
         if (aStatus != Windows::Foundation::AsyncStatus::Error)
         {

@@ -61,7 +61,7 @@ JSValueObject Picker::MakeDocumentPickerResponse(const StorageFile &aStorageFile
     return documentPickerResponse;
 }
 
-IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray> &&aResult) noexcept
+IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray> aResult) noexcept
 {
     auto picker(CreateFileOpenPicker(aOptions));
     JSValueArray files;
@@ -88,11 +88,10 @@ IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray>
 
 void Picker::pick(JSValue &&aOptions, ReactPromise<JSValueArray> &&aResult) noexcept
 {
-    mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult = std::move(aResult)]() mutable {
-        pickInternal(std::move(aOptions), std::move(aResult))
-            .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
-                AsyncActionCompletedHandler(aAction, aStatus, std::move(aResult));
-            });
+    mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult]() mutable {
+        pickInternal(std::move(aOptions), aResult).Completed([this, aResult](const auto &aAction, const auto &aStatus) {
+            AsyncActionCompletedHandler(aAction, aStatus, aResult);
+        });
     });
 }
 
@@ -117,7 +116,7 @@ FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &aOptions)
     return picker;
 }
 
-IAsyncAction Picker::saveDocumentInternal(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
+IAsyncAction Picker::saveDocumentInternal(JSValue &&aOptions, ReactPromise<JSValue> aResult) noexcept
 {
     auto picker(CreateFileSavePicker(aOptions));
     auto storageFile(co_await picker.PickSaveFileAsync());
@@ -134,10 +133,10 @@ IAsyncAction Picker::saveDocumentInternal(JSValue &&aOptions, ReactPromise<JSVal
 
 void Picker::saveDocument(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
 {
-    mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult = std::move(aResult)]() mutable {
-        saveDocumentInternal(std::move(aOptions), std::move(aResult))
+    mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult]() mutable {
+        saveDocumentInternal(std::move(aOptions), aResult)
             .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
-                AsyncActionCompletedHandler(aAction, aStatus, std::move(aResult));
+                AsyncActionCompletedHandler(aAction, aStatus, aResult);
             });
     });
 }
@@ -167,7 +166,7 @@ FolderPicker Picker::CreateFolderPicker(const JSValue &)
     return picker;
 }
 
-IAsyncAction Picker::pickDirectoryInternal(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
+IAsyncAction Picker::pickDirectoryInternal(JSValue &&aOptions, ReactPromise<JSValue> aResult) noexcept
 {
     auto picker(CreateFolderPicker(aOptions));
     JSValueObject folders;
@@ -183,10 +182,10 @@ IAsyncAction Picker::pickDirectoryInternal(JSValue &&aOptions, ReactPromise<JSVa
 
 void Picker::pickDirectory(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
 {
-    mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult = std::move(aResult)]() mutable {
-        pickDirectoryInternal(std::move(aOptions), std::move(aResult))
+    mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult]() mutable {
+        pickDirectoryInternal(std::move(aOptions), aResult)
             .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
-                AsyncActionCompletedHandler(aAction, aStatus, std::move(aResult));
+                AsyncActionCompletedHandler(aAction, aStatus, aResult);
             });
     });
 }
