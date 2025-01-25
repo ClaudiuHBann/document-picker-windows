@@ -33,18 +33,24 @@ struct Picker
     void pickDirectory(::React::JSValue &&aOptions, ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
     REACT_METHOD(keepLocalCopy)
-    void keepLocalCopy(::React::JSValue &&aOptions, ::React::ReactPromise<::React::JSValueArray> &&aResult) noexcept;
+    void keepLocalCopy(::React::JSValue &&, ::React::ReactPromise<::React::JSValueArray> &&aResult) noexcept;
 
     REACT_SYNC_METHOD(isKnownType)
     ::React::JSValue isKnownType(std::string aKind, std::string value) noexcept;
 
     REACT_METHOD(releaseSecureAccess)
-    void releaseSecureAccess(std::vector<std::string> const &aURIs,
+    void releaseSecureAccess(std::vector<std::string> const &,
                              ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
     REACT_METHOD(releaseLongTermAccess)
-    void releaseLongTermAccess(std::vector<std::string> const &aURIs,
+    void releaseLongTermAccess(std::vector<std::string> const &,
                                ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
+
+  private:
+    Windows::Storage::Pickers::FolderPicker CreateFolderPicker(const ::React::JSValue &aOptions);
+
+    Windows::Foundation::IAsyncAction pickDirectoryInternal(::React::JSValue &&aOptions,
+                                                            ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
   private:
     React::ReactContext mContext;

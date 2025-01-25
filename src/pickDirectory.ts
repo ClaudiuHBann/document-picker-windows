@@ -85,13 +85,21 @@ export async function pickDirectory<O extends DirectoryPickerOptions>(
         allowMultiSelection: false,
         type: ['public.folder'],
       };
-    } else {
+    } else if (Platform.OS === 'android') {
       return {
         // technically, "mode" is ignored here, and we shouldn't need to specify anything but the PickOptions data class
         // requires mode to be set
         mode: 'open',
         ...options,
       };
+    } else if (Platform.OS === 'windows') {
+      return {
+        ...options,
+        allowMultiSelection: false,
+        mode: 'open',
+      };
+    } else {
+      return {};
     }
   })();
   return NativeDocumentPickerWindows.pickDirectory(
