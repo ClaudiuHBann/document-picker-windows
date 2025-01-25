@@ -8,18 +8,6 @@ Pick documents on windows.
 npm install @react-native-documents-windows/picker
 ```
 
-## Usage
-
-
-```js
-import { multiply } from '@react-native-documents-windows/picker';
-
-// ...
-
-const result = multiply(3, 7);
-```
-
-
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.

@@ -1,12 +1,9 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from '@react-native-documents-windows/picker';
-
-const result = multiply(3, 7);
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>Result: xxx</Text>
     </View>
   );
 }
