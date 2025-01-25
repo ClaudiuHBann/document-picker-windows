@@ -20,6 +20,7 @@
     "@react-native/metro-config": "0.76.5",
     "@react-native/typescript-config": "0.76.5",
     "@rnx-kit/jest-preset": "^0.1.17",
+    "@types/invariant": "^2.2.37",
     "react-native-builder-bob": "^0.32.0"
   },
   "engines": {

@@ -2957,6 +2957,7 @@ __metadata:
     "@react-native/metro-config": 0.76.5
     "@react-native/typescript-config": 0.76.5
     "@rnx-kit/jest-preset": ^0.1.17
+    "@types/invariant": ^2.2.37
     react: 18.3.1
     react-native: 0.76.5
     react-native-builder-bob: ^0.32.0
@@ -3700,6 +3701,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 79d746a8f053954bba36bd3d94a90c78de995d126289d656fb3271dd9f1229d33f678da04d10bce6be440494a5a73438e2e363e92802d16b8315b051036c5256
+  languageName: node
+  linkType: hard
+
+"@types/invariant@npm:^2.2.37":
+  version: 2.2.37
+  resolution: "@types/invariant@npm:2.2.37"
+  checksum: dd6ee07af8516d21c868f95fd96c601c50a231e69c2df69360cb491b5858c76cf9b5a646df166cb4197b5078ca824da3dd90d6142d01a3cefc1176c57278b129
   languageName: node
   linkType: hard
 
