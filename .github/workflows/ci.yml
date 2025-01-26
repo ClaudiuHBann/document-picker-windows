@@ -26,6 +26,8 @@ jobs:
       - name: Typecheck files
         run: yarn typecheck
 
+  # TODO: add windows build job
+
   build-library:
     runs-on: ubuntu-latest
     steps:

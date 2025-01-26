@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import {
-  DirectoryPickerResponse,
-  DirectoryPickerResponseLongTerm,
+  type DirectoryPickerResponse,
+  type DirectoryPickerResponseLongTerm,
   type DocumentPickerResponse,
   errorCodes,
   isErrorWithCode,
