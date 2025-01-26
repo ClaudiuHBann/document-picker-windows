@@ -3,7 +3,6 @@
  */
 module.exports = {
   dependency: {
-    platforms: {
-    },
+    platforms: {},
   },
 };

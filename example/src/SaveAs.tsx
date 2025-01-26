@@ -136,7 +136,7 @@ export function SaveAsExamples() {
                 throw new Error('no uri found');
               })();
 
-              console.log('viewDocument');
+              console.log('viewDocument(' + uriToOpen + ')');
             } else {
               console.warn('no uri found', lastResults);
             }
