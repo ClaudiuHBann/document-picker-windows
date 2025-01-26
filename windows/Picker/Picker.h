@@ -5,6 +5,7 @@
 #endif
 #include "codegen/NativeDocumentPickerWindowsSpec.g.h"
 
+#include "MimeTypesHelper.h"
 #include "NativeModules.h"
 
 namespace winrt::Picker
@@ -47,15 +48,17 @@ struct Picker
                                ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
   private:
-    Windows::Storage::Pickers::FileOpenPicker CreateFileOpenPicker(const ::React::JSValue &aOptions);
+    Windows::Foundation::IAsyncOperation<Windows::Storage::Pickers::FileOpenPicker> CreateFileOpenPicker(
+        const std::shared_ptr<::React::JSValue> aOptions);
     Windows::Storage::Pickers::FileSavePicker CreateFileSavePicker(const ::React::JSValue &aOptions);
-    Windows::Storage::Pickers::FolderPicker CreateFolderPicker(const ::React::JSValue &aOptions);
+    Windows::Foundation::IAsyncOperation<Windows::Storage::Pickers::FolderPicker> CreateFolderPicker(
+        const std::shared_ptr<::React::JSValue> aOptions);
 
-    Windows::Foundation::IAsyncAction pickInternal(::React::JSValue &&aOptions,
+    Windows::Foundation::IAsyncAction pickInternal(const std::shared_ptr<::React::JSValue> aOptions,
                                                    ::React::ReactPromise<::React::JSValueArray> aResult) noexcept;
-    Windows::Foundation::IAsyncAction saveDocumentInternal(::React::JSValue &&aOptions,
+    Windows::Foundation::IAsyncAction saveDocumentInternal(const std::shared_ptr<::React::JSValue> aOptions,
                                                            ::React::ReactPromise<::React::JSValue> aResult) noexcept;
-    Windows::Foundation::IAsyncAction pickDirectoryInternal(::React::JSValue &&aOptions,
+    Windows::Foundation::IAsyncAction pickDirectoryInternal(const std::shared_ptr<::React::JSValue> aOptions,
                                                             ::React::ReactPromise<::React::JSValue> aResult) noexcept;
 
     template <typename Promise>
@@ -78,9 +81,11 @@ struct Picker
         aPromise.Reject(std::move(reactError));
     }
 
-    ::React::JSValueObject MakeDocumentPickerResponse(const Windows::Storage::StorageFile &aStorageFile);
+    Windows::Foundation::IAsyncAction PopulateDocumentPickerResponse(::React::JSValueObject &aResponse,
+                                                                     const Windows::Storage::StorageFile &aStorageFile);
 
   private:
     React::ReactContext mContext;
+    MimeTypesHelper mMimeTypesHelper;
 };
 } // namespace winrt::Picker

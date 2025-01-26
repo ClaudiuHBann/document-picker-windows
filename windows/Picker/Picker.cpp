@@ -12,6 +12,8 @@ constexpr auto kIsVirtual = "isVirtual"sv;                     // always false
 constexpr auto kHasRequestedType = "hasRequestedType"sv;       // always false
 constexpr auto kSourceUris = "sourceUris"sv;                   // always file paths
 constexpr auto kFileName = "fileName"sv;                       // file name with extension
+constexpr auto kType = "type"sv;                               // array of strings of mime types
+constexpr auto kNativeType = "nativeType"sv;                   // array of strings of types
 } // namespace
 
 namespace winrt::Picker
@@ -26,52 +28,57 @@ void Picker::Initialize(ReactContext const &aReactContext) noexcept
     mContext = aReactContext;
 }
 
-FileOpenPicker Picker::CreateFileOpenPicker(const JSValue &)
+IAsyncOperation<FileOpenPicker> Picker::CreateFileOpenPicker(const std::shared_ptr<JSValue> aOptions)
 {
     FileOpenPicker picker;
 
     const auto hwnd = ReactCoreInjection::GetTopLevelWindowId(mContext.Properties().Handle());
     picker.as<IInitializeWithWindow>()->Initialize(reinterpret_cast<HWND>(hwnd));
 
-    // TODO: use type(s) property from aOptions to filter the file types
-    // for (const auto &filter : aOptions.filters)
-    // {
-    //     picker.FileTypeFilter().Append(to_hstring(filter));
-    // }
-    picker.FileTypeFilter().Append(L"*");
+    for (const auto &mimeType : (*aOptions)[kType].AsArray())
+    {
+        const auto mimeTypeStr(to_hstring(mimeType.AsString()));
+        const auto fileTypes = co_await mMimeTypesHelper.MimeTypeToFileTypes(mimeTypeStr);
+
+        for (const auto &fileType : fileTypes)
+        {
+            picker.FileTypeFilter().Append(fileType);
+        }
+    }
 
     picker.SuggestedStartLocation(PickerLocationId::Desktop);
     picker.ViewMode(PickerViewMode::List);
 
-    return picker;
+    co_return picker;
 }
 
-JSValueObject Picker::MakeDocumentPickerResponse(const StorageFile &aStorageFile)
+IAsyncAction Picker::PopulateDocumentPickerResponse(JSValueObject &aResponse, const StorageFile &aStorageFile)
 {
-    const std::filesystem::path path(to_string(aStorageFile.Path()));
+    const auto path(aStorageFile.Path());
 
-    JSValueObject documentPickerResponse;
-
-    documentPickerResponse[kUri] = path.string();
-    documentPickerResponse[kName] = path.filename().string();
-    documentPickerResponse[kSize] = std::filesystem::file_size(path);
-    documentPickerResponse[kIsVirtual] = false;
-    documentPickerResponse[kHasRequestedType] = false;
-
-    return documentPickerResponse;
+    aResponse[kUri] = to_string(path);
+    aResponse[kName] = to_string(aStorageFile.Name());
+    aResponse[kSize] = std::filesystem::file_size(path.data());
+    aResponse[kType] = to_string(co_await mMimeTypesHelper.FileTypeToMimeType(path));
+    aResponse[kNativeType] = to_string(aStorageFile.FileType());
+    aResponse[kIsVirtual] = false;
+    aResponse[kHasRequestedType] = false;
 }
 
-IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray> aResult) noexcept
+IAsyncAction Picker::pickInternal(const std::shared_ptr<JSValue> aOptions, ReactPromise<JSValueArray> aResult) noexcept
 {
-    auto picker(CreateFileOpenPicker(aOptions));
+    auto picker(co_await CreateFileOpenPicker(aOptions));
     JSValueArray files;
 
-    if (aOptions[kAllowMultiSelection].AsBoolean())
+    if ((*aOptions)[kAllowMultiSelection].AsBoolean())
     {
         auto storageFiles(co_await picker.PickMultipleFilesAsync());
         for (const auto &storageFile : storageFiles)
         {
-            files.push_back(MakeDocumentPickerResponse(storageFile));
+            JSValueObject response;
+            co_await PopulateDocumentPickerResponse(response, storageFile);
+
+            files.push_back(std::move(response));
         }
     }
     else
@@ -79,7 +86,10 @@ IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray>
         auto storageFile(co_await picker.PickSingleFileAsync());
         if (storageFile)
         {
-            files.push_back(MakeDocumentPickerResponse(storageFile));
+            JSValueObject response;
+            co_await PopulateDocumentPickerResponse(response, storageFile);
+
+            files.push_back(std::move(response));
         }
     }
 
@@ -89,13 +99,14 @@ IAsyncAction Picker::pickInternal(JSValue &&aOptions, ReactPromise<JSValueArray>
 void Picker::pick(JSValue &&aOptions, ReactPromise<JSValueArray> &&aResult) noexcept
 {
     mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult]() mutable {
-        pickInternal(std::move(aOptions), aResult).Completed([this, aResult](const auto &aAction, const auto &aStatus) {
-            AsyncActionCompletedHandler(aAction, aStatus, aResult);
-        });
+        pickInternal(std::make_shared<JSValue>(std::move(aOptions)), aResult)
+            .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
+                AsyncActionCompletedHandler(aAction, aStatus, aResult);
+            });
     });
 }
 
-FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &aOptions)
+FileSavePicker Picker::CreateFileSavePicker(const JSValue &aOptions)
 {
     FileSavePicker picker;
 
@@ -108,6 +119,7 @@ FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &aOptions)
         const std::filesystem::path path(*fileName);
 
         picker.SuggestedFileName(path.filename().stem().native());
+        // TODO: change DefaultFileExtension to FileTypeChoices
         picker.DefaultFileExtension(path.filename().extension().native());
     }
 
@@ -116,17 +128,16 @@ FileSavePicker Picker::CreateFileSavePicker(const ::React::JSValue &aOptions)
     return picker;
 }
 
-IAsyncAction Picker::saveDocumentInternal(JSValue &&aOptions, ReactPromise<JSValue> aResult) noexcept
+IAsyncAction Picker::saveDocumentInternal(const std::shared_ptr<JSValue> aOptions,
+                                          ReactPromise<JSValue> aResult) noexcept
 {
-    auto picker(CreateFileSavePicker(aOptions));
+    auto picker(CreateFileSavePicker(*aOptions));
     auto storageFile(co_await picker.PickSaveFileAsync());
-
-    const std::filesystem::path path(to_string(storageFile.Path()));
 
     JSValueObject file;
 
-    file[kUri] = path.string();
-    file[kName] = path.filename().string();
+    file[kUri] = to_string(storageFile.Path());
+    file[kName] = to_string(storageFile.Name());
 
     aResult.Resolve(std::move(file));
 }
@@ -134,7 +145,7 @@ IAsyncAction Picker::saveDocumentInternal(JSValue &&aOptions, ReactPromise<JSVal
 void Picker::saveDocument(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
 {
     mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult]() mutable {
-        saveDocumentInternal(std::move(aOptions), aResult)
+        saveDocumentInternal(std::make_shared<JSValue>(std::move(aOptions)), aResult)
             .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
                 AsyncActionCompletedHandler(aAction, aStatus, aResult);
             });
@@ -146,29 +157,34 @@ void Picker::writeDocuments(JSValue &&, ReactPromise<std::vector<JSValue>> &&aRe
     aResult.Reject("Not implemented!");
 }
 
-FolderPicker Picker::CreateFolderPicker(const JSValue &)
+IAsyncOperation<FolderPicker> Picker::CreateFolderPicker(const std::shared_ptr<JSValue> aOptions)
 {
     FolderPicker picker;
 
     const auto hwnd = ReactCoreInjection::GetTopLevelWindowId(mContext.Properties().Handle());
     picker.as<IInitializeWithWindow>()->Initialize(reinterpret_cast<HWND>(hwnd));
 
-    // TODO: use type(s) property from aOptions to filter the file types
-    // for (const auto &filter : aOptions.filters)
-    // {
-    //     picker.FileTypeFilter().Append(to_hstring(filter));
-    // }
-    picker.FileTypeFilter().Append(L"*");
+    for (const auto &mimeType : (*aOptions)[kType].AsArray())
+    {
+        const auto mimeTypeStr(to_hstring(mimeType.AsString()));
+        const auto fileTypes = co_await mMimeTypesHelper.MimeTypeToFileTypes(mimeTypeStr);
+
+        for (const auto &fileType : fileTypes)
+        {
+            picker.FileTypeFilter().Append(fileType);
+        }
+    }
 
     picker.SuggestedStartLocation(PickerLocationId::Downloads);
     picker.ViewMode(PickerViewMode::List);
 
-    return picker;
+    co_return picker;
 }
 
-IAsyncAction Picker::pickDirectoryInternal(JSValue &&aOptions, ReactPromise<JSValue> aResult) noexcept
+IAsyncAction Picker::pickDirectoryInternal(const std::shared_ptr<JSValue> aOptions,
+                                           ReactPromise<JSValue> aResult) noexcept
 {
-    auto picker(CreateFolderPicker(aOptions));
+    auto picker(co_await CreateFolderPicker(aOptions));
     JSValueObject folders;
 
     auto storageFolder(co_await picker.PickSingleFolderAsync());
@@ -183,7 +199,7 @@ IAsyncAction Picker::pickDirectoryInternal(JSValue &&aOptions, ReactPromise<JSVa
 void Picker::pickDirectory(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) noexcept
 {
     mContext.UIDispatcher().Post([this, aOptions = std::move(aOptions), aResult]() mutable {
-        pickDirectoryInternal(std::move(aOptions), aResult)
+        pickDirectoryInternal(std::make_shared<JSValue>(std::move(aOptions)), aResult)
             .Completed([this, aResult](const auto &aAction, const auto &aStatus) {
                 AsyncActionCompletedHandler(aAction, aStatus, aResult);
             });
@@ -211,3 +227,5 @@ void Picker::releaseLongTermAccess(std::vector<std::string> const &, ReactPromis
     aResult.Resolve(nullptr);
 }
 } // namespace winrt::Picker
+
+// TODO: make requests and responses structs instead on magic strings and objects

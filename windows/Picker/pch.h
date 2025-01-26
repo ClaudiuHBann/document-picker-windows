@@ -16,7 +16,11 @@
 
 // winrt
 #include <winrt/Microsoft.ReactNative.h>
+#include <winrt/Windows.Data.Json.h>
+#include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Storage.Pickers.h>
+#include <winrt/Windows.Web.Http.h>
 
 // rnw
 #include <ReactPromise.h>
@@ -24,6 +28,8 @@
 // std
 #include <filesystem>
 #include <format>
+#include <map>
+#include <ranges>
 #include <string>
 #include <string_view>
 

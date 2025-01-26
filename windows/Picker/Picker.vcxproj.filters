@@ -3,11 +3,13 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="Picker.h" />
+    <ClInclude Include="MimeTypesHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Picker.cpp" />
+    <ClCompile Include="MimeTypesHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="ReactPackageProvider.idl" />
