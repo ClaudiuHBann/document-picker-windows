@@ -2993,6 +2993,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
+    react-native-windows: "*"
   languageName: unknown
   linkType: soft
 
