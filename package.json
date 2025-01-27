@@ -1,6 +1,6 @@
 {
   "name": "@react-native-documents-windows/picker",
-  "version": "0.1.0",
+  "version": "10.0.0",
   "description": "Pick documents on windows.",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
