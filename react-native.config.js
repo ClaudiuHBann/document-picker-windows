@@ -3,6 +3,17 @@
  */
 module.exports = {
   dependency: {
-    platforms: {},
+    platforms: {
+      windows: {
+        sourceDir: 'windows',
+        solutionFile: 'Picker.sln',
+        projects: [
+          {
+            projectFile: 'Picker\\Picker.vcxproj',
+            directDependency: true,
+          },
+        ],
+      },
+    },
   },
 };

@@ -21,6 +21,7 @@
     "src",
     "lib",
     "cpp",
+    "windows",
     "react-native.config.js",
     "!**/__fixtures__",
     "!**/__mocks__",
