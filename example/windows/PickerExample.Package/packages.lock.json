@@ -53,8 +53,8 @@
       "picker": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.ReactNative": "[0.76.6-Fabric, )",
-          "Microsoft.ReactNative.Cxx": "[0.76.6-Fabric, )",
+          "Microsoft.ReactNative": "[0.76.7-Fabric, )",
+          "Microsoft.ReactNative.Cxx": "[0.76.7-Fabric, )",
           "Microsoft.VCRTForwarders.140": "[1.0.2-rc, )",
           "Microsoft.WindowsAppSDK": "[1.6.240923002, )",
           "boost": "[1.83.0, )"

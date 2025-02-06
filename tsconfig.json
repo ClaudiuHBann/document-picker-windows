@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "@react-native-documents-windows/picker": ["./src/index"]
+      "@hbannro/rn-documents-picker-windows": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

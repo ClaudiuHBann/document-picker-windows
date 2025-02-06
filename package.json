@@ -1,5 +1,5 @@
 {
-  "name": "@react-native-documents-windows/picker",
+  "name": "@hbannro/rn-documents-picker-windows",
   "version": "10.0.0",
   "description": "Windows support for @react-native-documents/picker",
   "source": "./src/index.tsx",
@@ -28,7 +28,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace @react-native-documents-windows/picker-example",
+    "example": "yarn workspace @hbannro/rn-documents-picker-windows-example",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",

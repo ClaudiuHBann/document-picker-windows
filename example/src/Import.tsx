@@ -11,7 +11,7 @@ import {
   type LocalCopyResponse,
   type NonEmptyArray,
   type SaveDocumentsResponse,
-} from '@react-native-documents-windows/picker';
+} from '@hbannro/rn-documents-picker-windows';
 import invariant from 'invariant';
 import { useEffect } from 'react';
 import {

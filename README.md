@@ -1,11 +1,11 @@
-# @react-native-documents-windows/picker
+# @hbannro/rn-documents-picker-windows
 
 Pick documents on windows.
 
 ## Installation
 
 ```sh
-npm install @react-native-documents-windows/picker
+npm install @hbannro/rn-documents-picker-windows
 ```
 
 ## Contributing

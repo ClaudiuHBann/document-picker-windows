@@ -11,7 +11,7 @@ import {
   releaseLongTermAccess,
   releaseSecureAccess,
   types,
-} from '@react-native-documents-windows/picker';
+} from '@hbannro/rn-documents-picker-windows';
 import { useEffect } from 'react';
 import {
   Button,
