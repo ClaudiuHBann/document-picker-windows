@@ -1,7 +1,7 @@
 {
   "name": "@react-native-documents-windows/picker",
   "version": "10.0.0",
-  "description": "Pick documents on windows.",
+  "description": "Windows support for @react-native-documents/picker",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -33,21 +33,21 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",
     "prepare": "npx react-native codegen-windows",
-    "release": "release-it"
+    "release": "bob build && release-it"
   },
   "keywords": [
     "react-native"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ClaudiuHBann/react-native-documents-windows-picker.git"
+    "url": "git+https://github.com/ClaudiuHBann/document-picker-windows.git"
   },
   "author": "Claudiu HBann <123uidualcnnamreh@gmail.com> (https://github.com/ClaudiuHBann)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ClaudiuHBann/react-native-documents-windows-picker/issues"
+    "url": "https://github.com/ClaudiuHBann/document-picker-windows/issues"
   },
-  "homepage": "https://github.com/ClaudiuHBann/react-native-documents-windows-picker#readme",
+  "homepage": "https://github.com/ClaudiuHBann/document-picker-windows#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
