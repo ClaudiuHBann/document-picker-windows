@@ -4,23 +4,25 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
-    "windows": "npx @react-native-community/cli run-windows"
+    "windows": "npx @react-native-community/cli run-windows",
+    "test:windows": "jest --config jest.config.windows.js"
   },
   "dependencies": {
     "react": "18.3.1",
-    "react-native": "0.76.5",
-    "react-native-windows": "0.76.6"
+    "react-native": "0.77.0",
+    "react-native-windows": "0.77.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
     "@react-native-community/cli": "15.0.1",
-    "@react-native/babel-preset": "0.76.5",
-    "@react-native/metro-config": "0.76.5",
-    "@react-native/typescript-config": "0.76.5",
+    "@react-native/babel-preset": "0.77.0",
+    "@react-native/metro-config": "0.77.0",
+    "@react-native/typescript-config": "0.77.0",
     "@rnx-kit/jest-preset": "^0.1.17",
     "@types/invariant": "^2.2.37",
+    "@types/jest": "^29.5.13",
     "react-native-builder-bob": "^0.32.0"
   },
   "engines": {

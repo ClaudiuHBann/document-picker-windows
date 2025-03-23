@@ -29,6 +29,7 @@ IAsyncAction MimeTypesHelper::Initialize()
     }
 
     const Uri uri(to_hstring(kUrlMimeTypes));
+    // TODO: have a fallback in case the network request fails
     const auto jsonString(co_await mHttpClient.GetStringAsync(uri));
 
     const auto mimeTypes = JsonArray::Parse(jsonString);

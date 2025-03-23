@@ -40,8 +40,7 @@ struct Picker
     ::React::JSValue isKnownType(std::string aKind, std::string value) noexcept;
 
     REACT_METHOD(releaseSecureAccess)
-    void releaseSecureAccess(std::vector<std::string> const &,
-                             ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
+    void releaseSecureAccess(std::vector<std::string> const &, ::React::ReactPromise<void> &&aResult) noexcept;
 
     REACT_METHOD(releaseLongTermAccess)
     void releaseLongTermAccess(std::vector<std::string> const &,

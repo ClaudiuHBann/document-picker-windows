@@ -24,15 +24,15 @@
       },
       "Microsoft.ReactNative": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "Aq+h+YWmr4GLXODiXUBX0TirbghRmNn/sFdHommsp3EQYVRM4rVaykLuzdilLHEGJxpgnLOmvUwl32ejVAokKw=="
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "rVrH4Jea6Tf3vj4ob8xiV2Pwta0DFIoxCMnxtdEVAX+7bsQGJ5d8pmWIkCPlFfV5u7mgAfWcXQNSBcZnWRee3g=="
       },
       "Microsoft.ReactNative.Cxx": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "inE4NI1jN8Q0XCmSejjX/C28JXsibZZqWD1k1YNkAOAlq2M1NxXPzGweGbN1TlhYDwTE1sdtD9ArZrUUMhC1YA==",
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "el0biywVk646ozuXVz3endlDrl/3p1OKRhy8q98KYsgtbOkPTA4P7H4v+XIe4UjXsbE4vIg/3RZlnWfVfzzX+w==",
         "dependencies": {
-          "Microsoft.ReactNative": "0.76.6-Fabric"
+          "Microsoft.ReactNative": "0.77.0-Fabric"
         }
       },
       "Microsoft.VCRTForwarders.140": {
@@ -53,8 +53,8 @@
       "picker": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.ReactNative": "[0.76.7-Fabric, )",
-          "Microsoft.ReactNative.Cxx": "[0.76.7-Fabric, )",
+          "Microsoft.ReactNative": "[0.77.0-Fabric, )",
+          "Microsoft.ReactNative.Cxx": "[0.77.0-Fabric, )",
           "Microsoft.VCRTForwarders.140": "[1.0.2-rc, )",
           "Microsoft.WindowsAppSDK": "[1.6.240923002, )",
           "boost": "[1.83.0, )"
@@ -64,8 +64,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.JavaScript.Hermes": "[0.1.23, )",
-          "Microsoft.ReactNative": "[0.76.6-Fabric, )",
-          "Microsoft.ReactNative.Cxx": "[0.76.6-Fabric, )",
+          "Microsoft.ReactNative": "[0.77.0-Fabric, )",
+          "Microsoft.ReactNative.Cxx": "[0.77.0-Fabric, )",
           "Microsoft.VCRTForwarders.140": "[1.0.2-rc, )",
           "Microsoft.WindowsAppSDK": "[1.6.240923002, )",
           "Picker": "[1.0.0, )",
@@ -86,8 +86,8 @@
       },
       "Microsoft.ReactNative": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "Aq+h+YWmr4GLXODiXUBX0TirbghRmNn/sFdHommsp3EQYVRM4rVaykLuzdilLHEGJxpgnLOmvUwl32ejVAokKw=="
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "rVrH4Jea6Tf3vj4ob8xiV2Pwta0DFIoxCMnxtdEVAX+7bsQGJ5d8pmWIkCPlFfV5u7mgAfWcXQNSBcZnWRee3g=="
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Transitive",
@@ -113,8 +113,8 @@
       },
       "Microsoft.ReactNative": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "Aq+h+YWmr4GLXODiXUBX0TirbghRmNn/sFdHommsp3EQYVRM4rVaykLuzdilLHEGJxpgnLOmvUwl32ejVAokKw=="
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "rVrH4Jea6Tf3vj4ob8xiV2Pwta0DFIoxCMnxtdEVAX+7bsQGJ5d8pmWIkCPlFfV5u7mgAfWcXQNSBcZnWRee3g=="
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Transitive",
@@ -140,8 +140,8 @@
       },
       "Microsoft.ReactNative": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "Aq+h+YWmr4GLXODiXUBX0TirbghRmNn/sFdHommsp3EQYVRM4rVaykLuzdilLHEGJxpgnLOmvUwl32ejVAokKw=="
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "rVrH4Jea6Tf3vj4ob8xiV2Pwta0DFIoxCMnxtdEVAX+7bsQGJ5d8pmWIkCPlFfV5u7mgAfWcXQNSBcZnWRee3g=="
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Transitive",
@@ -167,8 +167,8 @@
       },
       "Microsoft.ReactNative": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "Aq+h+YWmr4GLXODiXUBX0TirbghRmNn/sFdHommsp3EQYVRM4rVaykLuzdilLHEGJxpgnLOmvUwl32ejVAokKw=="
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "rVrH4Jea6Tf3vj4ob8xiV2Pwta0DFIoxCMnxtdEVAX+7bsQGJ5d8pmWIkCPlFfV5u7mgAfWcXQNSBcZnWRee3g=="
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Transitive",
@@ -194,8 +194,8 @@
       },
       "Microsoft.ReactNative": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "Aq+h+YWmr4GLXODiXUBX0TirbghRmNn/sFdHommsp3EQYVRM4rVaykLuzdilLHEGJxpgnLOmvUwl32ejVAokKw=="
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "rVrH4Jea6Tf3vj4ob8xiV2Pwta0DFIoxCMnxtdEVAX+7bsQGJ5d8pmWIkCPlFfV5u7mgAfWcXQNSBcZnWRee3g=="
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Transitive",
@@ -221,8 +221,8 @@
       },
       "Microsoft.ReactNative": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "Aq+h+YWmr4GLXODiXUBX0TirbghRmNn/sFdHommsp3EQYVRM4rVaykLuzdilLHEGJxpgnLOmvUwl32ejVAokKw=="
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "rVrH4Jea6Tf3vj4ob8xiV2Pwta0DFIoxCMnxtdEVAX+7bsQGJ5d8pmWIkCPlFfV5u7mgAfWcXQNSBcZnWRee3g=="
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Transitive",
@@ -248,8 +248,8 @@
       },
       "Microsoft.ReactNative": {
         "type": "Transitive",
-        "resolved": "0.76.6-Fabric",
-        "contentHash": "Aq+h+YWmr4GLXODiXUBX0TirbghRmNn/sFdHommsp3EQYVRM4rVaykLuzdilLHEGJxpgnLOmvUwl32ejVAokKw=="
+        "resolved": "0.77.0-Fabric",
+        "contentHash": "rVrH4Jea6Tf3vj4ob8xiV2Pwta0DFIoxCMnxtdEVAX+7bsQGJ5d8pmWIkCPlFfV5u7mgAfWcXQNSBcZnWRee3g=="
       },
       "Microsoft.VCRTForwarders.140": {
         "type": "Transitive",

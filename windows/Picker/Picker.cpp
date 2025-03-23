@@ -217,9 +217,9 @@ JSValue Picker::isKnownType(std::string, std::string) noexcept
     return nullptr;
 }
 
-void Picker::releaseSecureAccess(std::vector<std::string> const &, ReactPromise<JSValue> &&aResult) noexcept
+void Picker::releaseSecureAccess(std::vector<std::string> const &, ReactPromise<void> &&aResult) noexcept
 {
-    aResult.Resolve(nullptr);
+    aResult.Resolve();
 }
 
 void Picker::releaseLongTermAccess(std::vector<std::string> const &, ReactPromise<JSValue> &&aResult) noexcept
