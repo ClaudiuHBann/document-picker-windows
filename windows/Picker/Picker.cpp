@@ -55,10 +55,11 @@ IAsyncOperation<FileOpenPicker> Picker::CreateFileOpenPicker(const std::shared_p
 IAsyncAction Picker::PopulateDocumentPickerResponse(JSValueObject &aResponse, const StorageFile &aStorageFile)
 {
     const auto path(aStorageFile.Path());
+    const auto basicProperties(co_await aStorageFile.GetBasicPropertiesAsync());
 
     aResponse[kUri] = to_string(path);
     aResponse[kName] = to_string(aStorageFile.Name());
-    aResponse[kSize] = std::filesystem::file_size(path.data());
+    aResponse[kSize] = basicProperties.Size();
     aResponse[kType] = to_string(co_await mMimeTypesHelper.FileTypeToMimeType(path));
     aResponse[kNativeType] = to_string(aStorageFile.FileType());
     aResponse[kIsVirtual] = false;
