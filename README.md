@@ -15,6 +15,7 @@ npm install @hbannro/rn-documents-picker-windows
 | 10.0.1                               | `=10.0.1`                      |
 | 10.1.0                               | `=10.1.0`                      |
 | 10.1.1                               | `>=10.1.1 <10.1.4`             |
+| 10.1.7                               | `>=10.1.4 <11.0.0`             |
 
 ## Contributing
 

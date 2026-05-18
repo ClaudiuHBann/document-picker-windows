@@ -14,6 +14,7 @@ constexpr auto kSourceUris = "sourceUris"sv;                   // always file pa
 constexpr auto kFileName = "fileName"sv;                       // file name with extension
 constexpr auto kType = "type"sv;                               // array of strings of mime types
 constexpr auto kNativeType = "nativeType"sv;                   // array of strings of types
+constexpr auto kFileUriScheme = "file:///"sv;                  // file URI scheme
 } // namespace
 
 namespace winrt::Picker
@@ -57,7 +58,7 @@ IAsyncAction Picker::PopulateDocumentPickerResponse(JSValueObject &aResponse, co
     const auto path(aStorageFile.Path());
     const auto basicProperties(co_await aStorageFile.GetBasicPropertiesAsync());
 
-    aResponse[kUri] = to_string(path);
+    aResponse[kUri] = kFileUriScheme.data() + to_string(path);
     aResponse[kName] = to_string(aStorageFile.Name());
     aResponse[kSize] = basicProperties.Size();
     aResponse[kType] = to_string(co_await mMimeTypesHelper.FileTypeToMimeType(path));
@@ -137,7 +138,7 @@ IAsyncAction Picker::saveDocumentInternal(const std::shared_ptr<JSValue> aOption
 
     JSValueObject file;
 
-    file[kUri] = to_string(storageFile.Path());
+    file[kUri] = kFileUriScheme.data() + to_string(storageFile.Path());
     file[kName] = to_string(storageFile.Name());
 
     aResult.Resolve(std::move(file));
@@ -191,7 +192,7 @@ IAsyncAction Picker::pickDirectoryInternal(const std::shared_ptr<JSValue> aOptio
     auto storageFolder(co_await picker.PickSingleFolderAsync());
     if (storageFolder)
     {
-        folders[kUri] = to_string(storageFolder.Path());
+        folders[kUri] = kFileUriScheme.data() + to_string(storageFolder.Path());
     }
 
     aResult.Resolve(std::move(folders));
