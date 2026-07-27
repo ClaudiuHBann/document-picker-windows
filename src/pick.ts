@@ -78,14 +78,12 @@ export type DocumentPickerOptionsOpenLongTerm = DocumentPickerOptionsBase & {
 };
 
 type DocumentPickerOptionsOpen =
-  | DocumentPickerOptionsOpenOnce
-  | DocumentPickerOptionsOpenLongTerm;
+  DocumentPickerOptionsOpenOnce | DocumentPickerOptionsOpenLongTerm;
 /**
  * @hidden
  */
 export type DocumentPickerOptions =
-  | DocumentPickerOptionsImport
-  | DocumentPickerOptionsOpen;
+  DocumentPickerOptionsImport | DocumentPickerOptionsOpen;
 
 /**
  * The result of calling {@link pick} with `mode: 'open'` and `requestLongTermAccess: true`

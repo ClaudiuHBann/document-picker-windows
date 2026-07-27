@@ -31,9 +31,7 @@ export function SaveAsExamples() {
 
   const addResult = (
     newResult:
-      | DocumentPickerResponse[]
-      | LocalCopyResponse[]
-      | SaveDocumentsResponse[]
+      DocumentPickerResponse[] | LocalCopyResponse[] | SaveDocumentsResponse[]
   ) => {
     _setResults((prevResult) => {
       const sort = <T extends object>(object: T): T => {
