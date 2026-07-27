@@ -34,7 +34,7 @@ struct Picker
     void pickDirectory(::React::JSValue &&aOptions, ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
     REACT_METHOD(keepLocalCopy)
-    void keepLocalCopy(::React::JSValue &&, ::React::ReactPromise<::React::JSValueArray> &&aResult) noexcept;
+    void keepLocalCopy(::React::JSValue &&, ::React::ReactPromise<std::vector<::React::JSValue>> &&aResult) noexcept;
 
     REACT_SYNC_METHOD(isKnownType)
     ::React::JSValue isKnownType(std::string aKind, std::string value) noexcept;

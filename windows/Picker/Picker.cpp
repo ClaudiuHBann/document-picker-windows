@@ -208,7 +208,7 @@ void Picker::pickDirectory(JSValue &&aOptions, ReactPromise<JSValue> &&aResult) 
     });
 }
 
-void Picker::keepLocalCopy(JSValue &&, ReactPromise<JSValueArray> &&aResult) noexcept
+void Picker::keepLocalCopy(JSValue &&, ReactPromise<std::vector<JSValue>> &&aResult) noexcept
 {
     aResult.Resolve({});
 }

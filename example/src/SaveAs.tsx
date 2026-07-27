@@ -11,14 +11,7 @@ import {
   types,
 } from '@hbannro/rn-documents-picker-windows';
 import { useEffect } from 'react';
-import {
-  Button,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { Box } from './components/Box';
 
 export function SaveAsExamples() {
@@ -87,102 +80,96 @@ export function SaveAsExamples() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{ gap: 20, padding: 10 }}
-        testID={'screenContainer'}
-      >
-        <Box label={'Save As Example'}>
-          <Button
-            title="import multiple files"
-            onPress={() => {
-              pick({ allowMultiSelection: true })
-                .then((res: any) => addResult(res))
-                .catch(handleError);
-            }}
-          />
-          <Button
-            title="import single pdf file"
-            onPress={() => {
-              pick({
-                type: types.pdf,
-              })
-                .then((res: any) => addResult(res))
-                .catch(handleError);
-            }}
-          />
-        </Box>
+    <View style={styles.section} testID={'saveAsExamples'}>
+      <Box label={'Save As Example'}>
         <Button
-          title="view the last imported file"
+          title="import multiple files"
           onPress={() => {
-            const lastResults = results[0];
-            if (
-              lastResults &&
-              Array.isArray(lastResults) &&
-              lastResults.length > 0 &&
-              lastResults[0]
-            ) {
-              const lastResult = lastResults[0];
-              const uriToOpen: string = (() => {
-                if ('uri' in lastResult) {
-                  return lastResult.uri;
-                }
-                if ('localUri' in lastResult) {
-                  return lastResult.localUri;
-                }
-                throw new Error('no uri found');
-              })();
-
-              console.log('viewDocument(' + uriToOpen + ')');
-            } else {
-              console.warn('no uri found', lastResults);
-            }
+            pick({ allowMultiSelection: true })
+              .then((res: any) => addResult(res))
+              .catch(handleError);
           }}
         />
         <Button
-          title="save the last imported file to a location (='Save As' dialog)"
-          onPress={async () => {
-            const lastResults = results[0];
-
-            if (verifyInput(lastResults)) {
-              const savedDocs = await saveDocuments({
-                sourceUris: lastResults.map((it) => it.uri),
-                copy: true,
-                fileName: 'some file name',
-                // mimeType: lastResults[0].type!,
-              });
-              addResult(savedDocs);
-            } else {
-              console.warn(
-                'In this demo, "Save As" works with the result of the last operation, and it needs to be an import.' +
-                  'The last operation was not import. Tap "Import single PDF" and try again.'
-              );
-            }
+          title="import single pdf file"
+          onPress={() => {
+            pick({
+              type: types.pdf,
+            })
+              .then((res: any) => addResult(res))
+              .catch(handleError);
           }}
         />
+      </Box>
+      <Button
+        title="view the last imported file"
+        onPress={() => {
+          const lastResults = results[0];
+          if (
+            lastResults &&
+            Array.isArray(lastResults) &&
+            lastResults.length > 0 &&
+            lastResults[0]
+          ) {
+            const lastResult = lastResults[0];
+            const uriToOpen: string = (() => {
+              if ('uri' in lastResult) {
+                return lastResult.uri;
+              }
+              if ('localUri' in lastResult) {
+                return lastResult.localUri;
+              }
+              throw new Error('no uri found');
+            })();
 
-        <Text>Results (most recent at the top)</Text>
-        <View>
-          {error && (
-            <Text
-              selectable
-              style={{ fontWeight: 'bold', color: 'black' }}
-              accessibilityLabel={'pickerError'}
-            >
-              Error: {error}
-            </Text>
-          )}
-          {results.flat().map((result: any, index) => {
-            return (
-              <View key={index}>
-                <Text>{JSON.stringify(result)}</Text>
-              </View>
+            console.log('viewDocument(' + uriToOpen + ')');
+          } else {
+            console.warn('no uri found', lastResults);
+          }
+        }}
+      />
+      <Button
+        title="save the last imported file to a location (='Save As' dialog)"
+        onPress={async () => {
+          const lastResults = results[0];
+
+          if (verifyInput(lastResults)) {
+            const savedDocs = await saveDocuments({
+              sourceUris: lastResults.map((it) => it.uri),
+              copy: true,
+              fileName: 'some file name',
+              // mimeType: lastResults[0].type!,
+            });
+            addResult(savedDocs);
+          } else {
+            console.warn(
+              'In this demo, "Save As" works with the result of the last operation, and it needs to be an import.' +
+                'The last operation was not import. Tap "Import single PDF" and try again.'
             );
-          })}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          }
+        }}
+      />
+
+      <Text>Results (most recent at the top)</Text>
+      <View>
+        {error && (
+          <Text
+            selectable
+            style={styles.error}
+            accessibilityLabel={'pickerError'}
+          >
+            Error: {error}
+          </Text>
+        )}
+        {results.flat().map((result: any, index) => {
+          return (
+            <View key={index}>
+              <Text>{JSON.stringify(result)}</Text>
+            </View>
+          );
+        })}
+      </View>
+    </View>
   );
 }
 
@@ -198,12 +185,12 @@ const verifyInput = (
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  section: {
+    gap: 20,
+    padding: 10,
   },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+  error: {
+    color: 'black',
+    fontWeight: 'bold',
   },
 });

@@ -8,25 +8,27 @@
     "test:windows": "jest --config jest.config.windows.js"
   },
   "dependencies": {
-    "react": "18.3.1",
-    "react-native": "0.77.0",
-    "react-native-windows": "0.77.0"
+    "react": "19.2.3",
+    "react-native": "0.84.1",
+    "react-native-windows": "0.84.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "15.0.1",
-    "@react-native/babel-preset": "0.77.0",
-    "@react-native/metro-config": "0.77.0",
-    "@react-native/typescript-config": "0.77.0",
-    "@rnx-kit/jest-preset": "^0.1.17",
+    "@react-native-community/cli": "20.1.0",
+    "@react-native/babel-preset": "0.84.1",
+    "@react-native/metro-config": "0.84.1",
+    "@react-native/typescript-config": "0.84.1",
+    "@rnx-kit/jest-preset": "^0.3.1",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.13",
-    "react-native-builder-bob": "^0.32.0"
+    "@types/react": "^19.2.0",
+    "react-native-builder-bob": "^0.40.13",
+    "react-native-monorepo-config": "^0.3.5"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "react-native-windows": {
     "init-windows": {

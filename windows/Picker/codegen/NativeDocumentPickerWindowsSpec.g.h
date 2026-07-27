@@ -21,7 +21,7 @@ struct DocumentPickerWindowsSpec : winrt::Microsoft::ReactNative::TurboModuleSpe
       Method<void(::React::JSValue, Promise<::React::JSValue>) noexcept>{1, L"saveDocument"},
       Method<void(::React::JSValue, Promise<std::vector<::React::JSValue>>) noexcept>{2, L"writeDocuments"},
       Method<void(::React::JSValue, Promise<::React::JSValue>) noexcept>{3, L"pickDirectory"},
-      Method<void(::React::JSValue, Promise<::React::JSValueArray>) noexcept>{4, L"keepLocalCopy"},
+      Method<void(::React::JSValue, Promise<std::vector<::React::JSValue>>) noexcept>{4, L"keepLocalCopy"},
       SyncMethod<::React::JSValue(std::string, std::string) noexcept>{5, L"isKnownType"},
       Method<void(std::vector<std::string>, Promise<void>) noexcept>{6, L"releaseSecureAccess"},
       Method<void(std::vector<std::string>, Promise<::React::JSValue>) noexcept>{7, L"releaseLongTermAccess"},
@@ -54,8 +54,8 @@ struct DocumentPickerWindowsSpec : winrt::Microsoft::ReactNative::TurboModuleSpe
     REACT_SHOW_METHOD_SPEC_ERRORS(
           4,
           "keepLocalCopy",
-          "    REACT_METHOD(keepLocalCopy) void keepLocalCopy(::React::JSValue && options, ::React::ReactPromise<::React::JSValueArray> &&result) noexcept { /* implementation */ }\n"
-          "    REACT_METHOD(keepLocalCopy) static void keepLocalCopy(::React::JSValue && options, ::React::ReactPromise<::React::JSValueArray> &&result) noexcept { /* implementation */ }\n");
+          "    REACT_METHOD(keepLocalCopy) void keepLocalCopy(::React::JSValue && options, ::React::ReactPromise<std::vector<::React::JSValue>> &&result) noexcept { /* implementation */ }\n"
+          "    REACT_METHOD(keepLocalCopy) static void keepLocalCopy(::React::JSValue && options, ::React::ReactPromise<std::vector<::React::JSValue>> &&result) noexcept { /* implementation */ }\n");
     REACT_SHOW_METHOD_SPEC_ERRORS(
           5,
           "isKnownType",
