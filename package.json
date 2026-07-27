@@ -154,7 +154,6 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      "codegen",
       [
         "commonjs",
         {
@@ -171,7 +170,7 @@
         "typescript",
         {
           "project": "tsconfig.build.json",
-          "esm": true
+          "tsc": "node_modules/.bin/tsc.cmd"
         }
       ]
     ]
