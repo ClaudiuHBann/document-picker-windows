@@ -148,7 +148,7 @@ IAsyncOperation<hstring> MimeTypesHelper::FileTypeToMimeType(const hstring &aFil
     co_await Initialize();
 
     const std::filesystem::path path(aFile.data());
-    const hstring fileType(aIsExtension ? path.filename().native() : path.extension().native());
+    const hstring fileType(aIsExtension ? L"." + path.filename().native() : path.extension().native());
 
     if (mFileTypeToMimeType.contains(fileType))
     {
