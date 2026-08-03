@@ -11,8 +11,11 @@
 #define WINRT_LEAN_AND_MEAN 1
 
 #include <Windows.h>
+#include <wininet.h>
 #undef GetCurrentTime
 #include <ShObjIdl_core.h>
+#include <Shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
 
 // winrt
 #include <winrt/Microsoft.ReactNative.h>
@@ -30,6 +33,7 @@
 #include <filesystem>
 #include <format>
 #include <map>
+#include <optional>
 #include <ranges>
 #include <string>
 #include <string_view>
