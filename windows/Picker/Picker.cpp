@@ -277,7 +277,7 @@ JSValue Picker::isKnownType(std::string aKind, std::string aValue) noexcept
 
             response[kIsKnown] = true;
             response[kMimeType] = aValue;
-            response[kPreferredFilenameExtension] = to_string(fileTypes.GetAt(0));
+            response[kPreferredFilenameExtension] = to_string(fileTypes.GetAt(0)).substr(1);
         }
         else if (aKind == kKindExtension)
         {
