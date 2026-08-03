@@ -30,6 +30,7 @@
 #include <ReactPromise.h>
 
 // std
+#include <algorithm>
 #include <filesystem>
 #include <format>
 #include <map>

@@ -9,7 +9,8 @@ class MimeTypesHelper final
 
     Windows::Foundation::IAsyncOperation<Windows::Foundation::Collections::IVector<hstring>> MimeTypeToFileTypes(
         const hstring &aMimeType);
-    Windows::Foundation::IAsyncOperation<hstring> FileTypeToMimeType(const hstring &aFile);
+    Windows::Foundation::IAsyncOperation<hstring> FileTypeToMimeType(const hstring &aFile,
+                                                                     const bool aIsExtension = false);
 
   private:
     static hstring LoadMimeDataFallback();

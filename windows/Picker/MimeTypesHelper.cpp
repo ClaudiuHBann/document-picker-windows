@@ -104,15 +104,36 @@ IAsyncOperation<IVector<hstring>> MimeTypesHelper::MimeTypeToFileTypes(const hst
 {
     co_await Initialize();
 
-    if (!mMimeTypesToFileTypes.contains(aMimeType))
+    if (mMimeTypesToFileTypes.contains(aMimeType))
     {
-        co_return mDefaultFileTypes;
+        co_return mMimeTypesToFileTypes.at(aMimeType);
+    }
+    else if (aMimeType.ends_with(L"/*") && aMimeType != mDefaultMimeType)
+    {
+        std::wstring mimeTypeWithoutWildcard(aMimeType);
+        mimeTypeWithoutWildcard.pop_back();
+
+        auto fileTypesView = mMimeTypesToFileTypes |
+                             std::views::filter([&mimeTypeWithoutWildcard](const auto &aMimeTypeToFileTypes) {
+                                 return aMimeTypeToFileTypes.first.starts_with(mimeTypeWithoutWildcard);
+                             }) |
+                             std::views::transform([](const auto &aMimeTypeToFileTypes) -> const auto & {
+                                 return aMimeTypeToFileTypes.second;
+                             }) |
+                             std::views::join;
+        if (!std::ranges::empty(fileTypesView))
+        {
+            auto fileTypes = single_threaded_vector<hstring>();
+            std::ranges::for_each(fileTypesView, [&](const auto &aFileType) { fileTypes.Append(aFileType); });
+            co_return fileTypes;
+        }
     }
 
-    co_return mMimeTypesToFileTypes.at(aMimeType);
+    co_return mDefaultFileTypes;
 }
 
-IAsyncOperation<hstring> MimeTypesHelper::FileTypeToMimeType(const hstring &aFile)
+IAsyncOperation<hstring> MimeTypesHelper::FileTypeToMimeType(const hstring &aFile,
+                                                             const bool aIsExtension /* = false */)
 {
     co_await Initialize();
 
