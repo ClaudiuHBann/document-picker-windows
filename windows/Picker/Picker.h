@@ -47,6 +47,9 @@ struct Picker
                                ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
   private:
+    static std::optional<std::string> UriFromPath(const hstring &aPath);
+
+  private:
     Windows::Foundation::IAsyncOperation<Windows::Storage::Pickers::FileOpenPicker> CreateFileOpenPicker(
         const std::shared_ptr<::React::JSValue> aOptions);
     Windows::Storage::Pickers::FileSavePicker CreateFileSavePicker(const ::React::JSValue &aOptions);
