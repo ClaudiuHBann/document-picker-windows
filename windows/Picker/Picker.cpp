@@ -165,18 +165,7 @@ IAsyncOperation<FolderPicker> Picker::CreateFolderPicker(const std::shared_ptr<J
 
     const auto hwnd = ReactCoreInjection::GetTopLevelWindowId(mContext.Properties().Handle());
     picker.as<IInitializeWithWindow>()->Initialize(reinterpret_cast<HWND>(hwnd));
-
-    for (const auto &mimeType : (*aOptions)[kType].AsArray())
-    {
-        const auto mimeTypeStr(to_hstring(mimeType.AsString()));
-        const auto fileTypes = co_await mMimeTypesHelper.MimeTypeToFileTypes(mimeTypeStr);
-
-        for (const auto &fileType : fileTypes)
-        {
-            picker.FileTypeFilter().Append(fileType);
-        }
-    }
-
+    picker.FileTypeFilter().Append(L"*");
     picker.SuggestedStartLocation(PickerLocationId::Downloads);
     picker.ViewMode(PickerViewMode::List);
 
