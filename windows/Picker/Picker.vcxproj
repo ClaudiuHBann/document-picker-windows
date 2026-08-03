@@ -106,6 +106,7 @@
       <DependentUpon>ReactPackageProvider.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MimeTypesHelper.cpp" />
@@ -121,11 +122,15 @@
   <ItemGroup>
     <Midl Include="ReactPackageProvider.idl" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Picker.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ReactNativeWindowsTargets">
     <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.targets" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.targets')" />
   </ImportGroup>
   <ItemGroup>
+    <None Include="mimeDataFallback.json" />
     <None Include="Picker.def" />
   </ItemGroup>
   <Target Name="EnsureReactNativeWindowsTargets" BeforeTargets="PrepareForBuild">
