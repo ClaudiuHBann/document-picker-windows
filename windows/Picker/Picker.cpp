@@ -151,10 +151,14 @@ FileSavePicker Picker::CreateFileSavePicker(const JSValue &aOptions)
     if (fileName)
     {
         const std::filesystem::path path(*fileName);
+        const hstring extension(path.filename().extension().native());
 
         picker.SuggestedFileName(path.filename().stem().native());
-        // TODO: change DefaultFileExtension to FileTypeChoices
-        picker.DefaultFileExtension(path.filename().extension().native());
+        if (!extension.empty())
+        {
+            picker.DefaultFileExtension(extension);
+            picker.FileTypeChoices().Insert(L"File", single_threaded_vector<hstring>({extension}));
+        }
     }
 
     picker.SuggestedStartLocation(PickerLocationId::Desktop);
