@@ -68,16 +68,26 @@ struct Picker
     void AsyncActionCompletedHandler(const Windows::Foundation::IAsyncAction &aAction,
                                      const Windows::Foundation::AsyncStatus &aStatus, Promise aPromise) noexcept
     {
-        if (aStatus != Windows::Foundation::AsyncStatus::Error)
+        if (aStatus == Windows::Foundation::AsyncStatus::Completed)
         {
             return;
         }
 
-        const auto errorCode = aAction.ErrorCode().value;
-        const auto errorMessage = std::system_category().message(errorCode);
+        if (aStatus == Windows::Foundation::AsyncStatus::Canceled)
+        {
+            aPromise.Reject(Microsoft::ReactNative::ReactError{
+                .Code = "OPERATION_CANCELED",
+                .Message = "The picker operation was canceled.",
+            });
+            return;
+        }
 
+        const auto errorCode = aAction.ErrorCode();
+        const auto errorCodeValue = static_cast<unsigned int>(errorCode.value);
         Microsoft::ReactNative::ReactError reactError{
-            .Message = std::format("HRESULT 0x{:}: {}", errorCode, errorMessage),
+            .Code = std::format("0x{:08X}", errorCodeValue),
+            .Message = std::format("HRESULT 0x{:08X}: {}", errorCodeValue,
+                                   to_string(winrt::hresult_error(errorCode).message())),
         };
 
         aPromise.Reject(std::move(reactError));

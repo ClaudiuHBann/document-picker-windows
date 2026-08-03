@@ -23,6 +23,8 @@ constexpr auto kIsKnown = "isKnown"sv;                                       // 
 constexpr auto kPreferredFilenameExtension = "preferredFilenameExtension"sv; // string
 constexpr auto kMimeType = "mimeType"sv;                                     // string
 constexpr auto kUTType = "UTType"sv;                                         // string
+
+constexpr auto kAsyncStatusCanceledString = "OPERATION_CANCELED"sv;
 } // namespace
 
 namespace winrt::Picker
@@ -116,6 +118,15 @@ IAsyncAction Picker::pickInternal(const std::shared_ptr<JSValue> aOptions, React
         }
     }
 
+    if (files.empty())
+    {
+        aResult.Reject(ReactError{
+            .Code = kAsyncStatusCanceledString.data(),
+            .Message = "The document picker was canceled.",
+        });
+        co_return;
+    }
+
     aResult.Resolve(std::move(files));
 }
 
@@ -156,6 +167,15 @@ IAsyncAction Picker::saveDocumentInternal(const std::shared_ptr<JSValue> aOption
 {
     auto picker(CreateFileSavePicker(*aOptions));
     auto storageFile(co_await picker.PickSaveFileAsync());
+
+    if (!storageFile)
+    {
+        aResult.Reject(ReactError{
+            .Code = kAsyncStatusCanceledString.data(),
+            .Message = "The save picker was canceled.",
+        });
+        co_return;
+    }
 
     JSValueObject file;
 
@@ -200,8 +220,13 @@ IAsyncAction Picker::pickDirectoryInternal(const std::shared_ptr<JSValue> aOptio
     JSValueObject folders;
 
     auto storageFolder(co_await picker.PickSingleFolderAsync());
-    if (storageFolder)
+    if (!storageFolder)
     {
+        aResult.Reject(ReactError{
+            .Code = kAsyncStatusCanceledString.data(),
+            .Message = "The folder picker was canceled.",
+        });
+        co_return;
     }
 
     folders[kUri] = JSValue(UriFromPath(storageFolder.Path()));
