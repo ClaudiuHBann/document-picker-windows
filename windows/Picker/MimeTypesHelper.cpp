@@ -1,11 +1,14 @@
 #include "pch.h"
 
 #include "MimeTypesHelper.h"
+#include "resource.h"
 
 namespace
 {
 constexpr auto kUrlMimeTypes =
     "https://raw.githubusercontent.com/patrickmccallum/mimetype-io/refs/heads/master/src/mimeData.json"sv;
+
+constexpr auto kEmptyMimeDataJson = L"[]"sv;
 
 constexpr auto kMimeTypeName = L"name"sv;
 constexpr auto kMimeTypeFileTypes = L"fileTypes"sv;
@@ -21,6 +24,42 @@ MimeTypesHelper::MimeTypesHelper() : mDefaultFileTypes(single_threaded_vector<hs
 {
 }
 
+/* static */ hstring MimeTypesHelper::LoadMimeDataFallback()
+{
+    HMODULE module{};
+    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                            reinterpret_cast<LPCWSTR>(&LoadMimeDataFallback), &module))
+    {
+        return kEmptyMimeDataJson.data();
+    }
+
+    const auto resource = FindResourceW(module, MAKEINTRESOURCEW(IDR_MIME_DATA_FALLBACK), RT_RCDATA);
+    if (!resource)
+    {
+        return kEmptyMimeDataJson.data();
+    }
+
+    const auto dataHandle = LoadResource(module, resource);
+    if (!dataHandle)
+    {
+        return kEmptyMimeDataJson.data();
+    }
+
+    const auto data = LockResource(dataHandle);
+    if (!data)
+    {
+        return kEmptyMimeDataJson.data();
+    }
+
+    const auto size = SizeofResource(module, resource);
+    if (!size)
+    {
+        return kEmptyMimeDataJson.data();
+    }
+
+    return winrt::to_hstring(std::string_view(static_cast<const char *>(data), size));
+}
+
 IAsyncAction MimeTypesHelper::Initialize()
 {
     if (mMimeTypesToFileTypes.size() || mFileTypeToMimeType.size())
@@ -29,8 +68,15 @@ IAsyncAction MimeTypesHelper::Initialize()
     }
 
     const Uri uri(to_hstring(kUrlMimeTypes));
-    // TODO: have a fallback in case the network request fails
-    const auto jsonString(co_await mHttpClient.GetStringAsync(uri));
+    hstring jsonString;
+    try
+    {
+        jsonString = co_await mHttpClient.GetStringAsync(uri);
+    }
+    catch (...)
+    {
+        jsonString = LoadMimeDataFallback();
+    }
 
     const auto mimeTypes = JsonArray::Parse(jsonString);
     for (const auto &iMimeType : mimeTypes)
