@@ -14,6 +14,15 @@ constexpr auto kSourceUris = "sourceUris"sv;                   // always file pa
 constexpr auto kFileName = "fileName"sv;                       // file name with extension
 constexpr auto kType = "type"sv;                               // array of strings of mime types
 constexpr auto kNativeType = "nativeType"sv;                   // array of strings of types
+
+constexpr auto kKindUTType = "UTType"sv; // apple specific
+constexpr auto kKindMimeType = "mimeType"sv;
+constexpr auto kKindExtension = "extension"sv;
+
+constexpr auto kIsKnown = "isKnown"sv;                                       // boolean
+constexpr auto kPreferredFilenameExtension = "preferredFilenameExtension"sv; // string
+constexpr auto kMimeType = "mimeType"sv;                                     // string
+constexpr auto kUTType = "UTType"sv;                                         // string
 } // namespace
 
 namespace winrt::Picker
@@ -214,10 +223,51 @@ void Picker::keepLocalCopy(JSValue &&, ReactPromise<std::vector<JSValue>> &&aRes
     aResult.Resolve({});
 }
 
-JSValue Picker::isKnownType(std::string, std::string) noexcept
+JSValue Picker::isKnownType(std::string aKind, std::string aValue) noexcept
 {
-    // TODO: implement me
-    return nullptr;
+    JSValueObject response;
+    response[kIsKnown] = false;
+    response[kPreferredFilenameExtension] = nullptr;
+    response[kMimeType] = nullptr;
+    response[kUTType] = nullptr;
+
+    try
+    {
+        if (aKind == kKindUTType)
+        {
+            return response;
+        }
+
+        if (aKind == kKindMimeType)
+        {
+            const auto fileTypes = mMimeTypesHelper.MimeTypeToFileTypes(to_hstring(aValue)).get();
+            if (fileTypes.Size() == 1 && fileTypes.GetAt(0) == mMimeTypesHelper.GetDefaultFileType())
+            {
+                return response;
+            }
+
+            response[kIsKnown] = true;
+            response[kMimeType] = aValue;
+            response[kPreferredFilenameExtension] = to_string(fileTypes.GetAt(0));
+        }
+        else if (aKind == kKindExtension)
+        {
+            const auto mimeType = mMimeTypesHelper.FileTypeToMimeType(to_hstring(aValue), true).get();
+            if (mimeType == mMimeTypesHelper.GetDefaultMimeType())
+            {
+                return response;
+            }
+
+            response[kIsKnown] = true;
+            response[kPreferredFilenameExtension] = aValue;
+            response[kMimeType] = to_string(mimeType);
+        }
+    }
+    catch (...)
+    {
+    }
+
+    return response;
 }
 
 void Picker::releaseSecureAccess(std::vector<std::string> const &, ReactPromise<void> &&aResult) noexcept

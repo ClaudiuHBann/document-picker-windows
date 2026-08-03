@@ -60,6 +60,16 @@ MimeTypesHelper::MimeTypesHelper() : mDefaultFileTypes(single_threaded_vector<hs
     return winrt::to_hstring(std::string_view(static_cast<const char *>(data), size));
 }
 
+const hstring &MimeTypesHelper::GetDefaultMimeType() const
+{
+    return mDefaultMimeType;
+}
+
+hstring MimeTypesHelper::GetDefaultFileType() const
+{
+    return mDefaultFileTypes.GetAt(0);
+}
+
 IAsyncAction MimeTypesHelper::Initialize()
 {
     if (mMimeTypesToFileTypes.size() || mFileTypeToMimeType.size())
@@ -138,13 +148,13 @@ IAsyncOperation<hstring> MimeTypesHelper::FileTypeToMimeType(const hstring &aFil
     co_await Initialize();
 
     const std::filesystem::path path(aFile.data());
-    const hstring fileType(path.extension().native());
+    const hstring fileType(aIsExtension ? path.filename().native() : path.extension().native());
 
-    if (!mFileTypeToMimeType.contains(fileType))
+    if (mFileTypeToMimeType.contains(fileType))
     {
-        co_return mDefaultMimeType;
+        co_return mFileTypeToMimeType.at(fileType);
     }
 
-    co_return mFileTypeToMimeType.at(fileType);
+    co_return mDefaultMimeType;
 }
 } // namespace winrt::Picker
