@@ -1,6 +1,6 @@
 {
   "name": "@hbannro/rn-documents-picker-windows",
-  "version": "12.0.1",
+  "version": "12.0.2",
   "description": "Windows support for @react-native-documents/picker",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
