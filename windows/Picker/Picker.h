@@ -37,7 +37,7 @@ struct Picker
     void keepLocalCopy(::React::JSValue &&, ::React::ReactPromise<::React::JSValueArray> &&aResult) noexcept;
 
     REACT_SYNC_METHOD(isKnownType)
-    ::React::JSValue isKnownType(std::string aKind, std::string value) noexcept;
+    ::React::JSValue isKnownType(std::string aKind, std::string aValue) noexcept;
 
     REACT_METHOD(releaseSecureAccess)
     void releaseSecureAccess(std::vector<std::string> const &, ::React::ReactPromise<void> &&aResult) noexcept;
