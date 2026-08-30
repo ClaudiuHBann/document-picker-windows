@@ -25,6 +25,17 @@ constexpr auto kMimeType = "mimeType"sv;                                     // 
 constexpr auto kUTType = "UTType"sv;                                         // string
 
 constexpr auto kAsyncStatusCanceledString = "OPERATION_CANCELED"sv;
+
+constexpr auto kFileUriPrefixA = "file://"sv;        // UNC/network paths
+constexpr auto kFileUriPrefixW = L"file://"sv;       // UNC/network paths
+constexpr auto kLocalFileUriPrefixA = "file:///"sv;  // local drive paths
+constexpr auto kLocalFileUriPrefixW = L"file:///"sv; // local drive paths
+constexpr auto kUriPathSeparatorA = '/';
+constexpr auto kUriPathSeparatorW = L'/';
+
+constexpr auto kUncPathPrefix = LR"(\\)"sv;
+constexpr auto kExtendedPathPrefix = LR"(\\?\)"sv;
+constexpr auto kDevicePathPrefix = LR"(\\.\)"sv;
 } // namespace
 
 namespace winrt::Picker
@@ -39,17 +50,66 @@ void Picker::Initialize(ReactContext const &aReactContext) noexcept
     mContext = aReactContext;
 }
 
-/* static */ std::optional<std::string> Picker::UriFromPath(const hstring &aPath)
+/* static */ std::string Picker::UriFromPath(const hstring &aPath)
 {
-    wchar_t url[INTERNET_MAX_URL_LENGTH]{};
-    DWORD urlLength = INTERNET_MAX_URL_LENGTH;
+    const std::filesystem::path path(aPath.c_str());
+    const auto &pathNative = path.native();
 
-    if (FAILED(UrlCreateFromPathW(aPath.c_str(), url, &urlLength, 0)))
+    if (pathNative.empty() || !path.is_absolute() || pathNative.starts_with(kExtendedPathPrefix) ||
+        pathNative.starts_with(kDevicePathPrefix))
     {
-        return std::nullopt;
+        throw hresult_invalid_argument(L"Relative, extended and device paths are not supported yet.");
     }
 
-    return to_string(url);
+    const auto escapeComponent = [](const std::wstring &aComponent) {
+        if (aComponent.empty() || aComponent == L"."sv || aComponent == L".."sv)
+        {
+            throw hresult_invalid_argument(L"Relative paths are not supported yet.");
+        }
+
+        std::array<wchar_t, INTERNET_MAX_URL_LENGTH> escaped{};
+        DWORD escapedLength = static_cast<DWORD>(escaped.size());
+
+        constexpr DWORD escapeFlags = URL_ESCAPE_URI_COMPONENT | URL_ESCAPE_SEGMENT_ONLY;
+        check_hresult(UrlEscapeW(aComponent.c_str(), escaped.data(), &escapedLength, escapeFlags));
+
+        return std::wstring(escaped.data(), escapedLength);
+    };
+
+    std::wstring uri;
+    const auto rootName = path.root_name().native();
+
+    if (pathNative.starts_with(kUncPathPrefix))
+    {
+        uri = kFileUriPrefixW;
+        uri += escapeComponent(rootName.substr(kUncPathPrefix.size()));
+        uri += kUriPathSeparatorW;
+    }
+    else
+    {
+        uri = kLocalFileUriPrefixW;
+        uri += rootName; // drive, e.g.: "C:"
+        uri += kUriPathSeparatorW;
+    }
+
+    bool firstComponent = true;
+    for (const auto &component : path.relative_path())
+    {
+        if (!firstComponent)
+        {
+            uri += kUriPathSeparatorW;
+        }
+
+        uri += escapeComponent(component.native());
+        firstComponent = false;
+    }
+
+    if (pathNative.starts_with(kUncPathPrefix) && firstComponent)
+    {
+        throw hresult_invalid_argument(L"The UNC path does not contain a share name.");
+    }
+
+    return to_string(uri);
 }
 
 IAsyncOperation<FileOpenPicker> Picker::CreateFileOpenPicker(const std::shared_ptr<JSValue> aOptions)
