@@ -33,7 +33,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",
     "prepare": "npx react-native codegen-windows",
-    "release": "bob build && release-it"
+    "release": "release-it"
   },
   "keywords": [
     "react-native"
