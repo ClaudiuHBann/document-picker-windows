@@ -1,6 +1,6 @@
 {
   "name": "@hbannro/rn-documents-picker-windows",
-  "version": "12.0.2",
+  "version": "12.1.0",
   "description": "Windows support for @react-native-documents/picker",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
@@ -34,7 +34,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",
     "prepare": "npx react-native codegen-windows",
-    "release": "bob build && release-it"
+    "release": "release-it"
   },
   "keywords": [
     "react-native"
