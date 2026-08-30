@@ -40,6 +40,7 @@ export {
   type SaveDocumentsOptions,
   type SaveDocumentsResponse,
 } from './saveDocuments';
+export { uriToPath } from './uriToPath';
 export type { LocalCopyResponse } from './spec/NativeDocumentPickerWindows';
 export type {
   BookmarkingResponse,

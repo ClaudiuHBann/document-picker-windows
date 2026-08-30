@@ -24,6 +24,7 @@ export interface Spec extends TurboModule {
   pickDirectory(options: Object): Promise<Object>;
   keepLocalCopy(options: Object): Promise<LocalCopyResponse[]>;
   isKnownType(kind: string, value: string): Object;
+  uriToPath(uri: string): string | null;
   releaseSecureAccess(uris: string[]): Promise<null>;
   releaseLongTermAccess(uris: string[]): Promise<Object>;
 }

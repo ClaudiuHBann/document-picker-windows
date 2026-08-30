@@ -112,6 +112,121 @@ void Picker::Initialize(ReactContext const &aReactContext) noexcept
     return to_string(uri);
 }
 
+/* static */ std::optional<std::string> Picker::PathFromUri(const std::string &aUri)
+{
+    if (aUri.empty())
+    {
+        return std::nullopt;
+    }
+
+    const auto unescapeComponent = [](const std::string &aComponent) -> std::optional<std::wstring> {
+        if (aComponent.empty())
+        {
+            return std::nullopt;
+        }
+
+        std::wstring component(aComponent.begin(), aComponent.end());
+        std::vector<wchar_t> unescaped(component.size() + 1);
+        DWORD unescapedLength = static_cast<DWORD>(unescaped.size());
+
+        if (FAILED(UrlUnescapeW(component.data(), unescaped.data(), &unescapedLength, URL_UNESCAPE_AS_UTF8)))
+        {
+            return std::nullopt;
+        }
+
+        std::wstring result(unescaped.data(), unescapedLength);
+        if (result.empty() || result == L"."sv || result == L".."sv)
+        {
+            return std::nullopt;
+        }
+
+        return result;
+    };
+
+    const auto appendPathComponents = [&unescapeComponent](const std::string &aEncodedPath,
+                                                           std::filesystem::path &aPath) {
+        if (aEncodedPath.empty())
+        {
+            return true;
+        }
+
+        size_t componentStart = 0;
+        while (componentStart <= aEncodedPath.size())
+        {
+            const auto separator = aEncodedPath.find(kUriPathSeparatorA, componentStart);
+            const auto componentEnd = separator == std::string_view::npos ? aEncodedPath.size() : separator;
+            const auto decoded = unescapeComponent(aEncodedPath.substr(componentStart, componentEnd - componentStart));
+            if (!decoded)
+            {
+                return false;
+            }
+
+            aPath /= *decoded;
+
+            if (separator == std::string_view::npos)
+            {
+                break;
+            }
+
+            componentStart = separator + 1;
+        }
+
+        return true;
+    };
+
+    std::filesystem::path path;
+
+    if (aUri.starts_with(kLocalFileUriPrefixA))
+    {
+        const auto localPath = aUri.substr(kLocalFileUriPrefixA.size());
+        const std::wstring root{static_cast<wchar_t>(localPath[0]), L':', L'\\'};
+
+        path = std::filesystem::path(root);
+        if (!appendPathComponents(localPath.substr(3), path))
+        {
+            return std::nullopt;
+        }
+    }
+    else if (aUri.starts_with(kFileUriPrefixA))
+    {
+        const auto uncUri = aUri.substr(kFileUriPrefixA.size());
+        const auto authorityEnd = uncUri.find(kUriPathSeparatorA);
+        if (authorityEnd == std::string::npos)
+        {
+            return std::nullopt;
+        }
+
+        const auto host = unescapeComponent(uncUri.substr(0, authorityEnd));
+        if (!host)
+        {
+            return std::nullopt;
+        }
+
+        const auto encodedPath = uncUri.substr(authorityEnd + 1);
+        if (encodedPath.empty())
+        {
+            return std::nullopt;
+        }
+
+        path = std::filesystem::path(kUncPathPrefix.data() + *host);
+        if (!appendPathComponents(encodedPath, path))
+        {
+            return std::nullopt;
+        }
+    }
+    else
+    {
+        return std::nullopt;
+    }
+
+    if (!path.is_absolute() || UriFromPath(hstring{path.native()}) != aUri)
+    {
+        return std::nullopt;
+    }
+
+    return to_string(path.native());
+}
+
 IAsyncOperation<FileOpenPicker> Picker::CreateFileOpenPicker(const std::shared_ptr<JSValue> aOptions)
 {
     FileOpenPicker picker;
@@ -357,6 +472,18 @@ JSValue Picker::isKnownType(std::string aKind, std::string aValue) noexcept
     }
 
     return response;
+}
+
+std::optional<std::string> Picker::uriToPath(std::string aUri) noexcept
+{
+    try
+    {
+        return PathFromUri(aUri);
+    }
+    catch (...)
+    {
+        return std::nullopt;
+    }
 }
 
 void Picker::releaseSecureAccess(std::vector<std::string> const &, ReactPromise<void> &&aResult) noexcept

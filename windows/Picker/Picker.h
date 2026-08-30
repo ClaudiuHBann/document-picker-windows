@@ -39,6 +39,9 @@ struct Picker
     REACT_SYNC_METHOD(isKnownType)
     ::React::JSValue isKnownType(std::string aKind, std::string aValue) noexcept;
 
+    REACT_SYNC_METHOD(uriToPath)
+    std::optional<std::string> uriToPath(std::string aUri) noexcept;
+
     REACT_METHOD(releaseSecureAccess)
     void releaseSecureAccess(std::vector<std::string> const &, ::React::ReactPromise<void> &&aResult) noexcept;
 
@@ -48,6 +51,7 @@ struct Picker
 
   private:
     static std::string UriFromPath(const hstring &aPath);
+    static std::optional<std::string> PathFromUri(const std::string &aUri);
 
   private:
     Windows::Foundation::IAsyncOperation<Windows::Storage::Pickers::FileOpenPicker> CreateFileOpenPicker(

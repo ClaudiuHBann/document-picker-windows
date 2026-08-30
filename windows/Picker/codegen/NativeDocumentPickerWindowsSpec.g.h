@@ -23,8 +23,9 @@ struct DocumentPickerWindowsSpec : winrt::Microsoft::ReactNative::TurboModuleSpe
       Method<void(::React::JSValue, Promise<::React::JSValue>) noexcept>{3, L"pickDirectory"},
       Method<void(::React::JSValue, Promise<::React::JSValueArray>) noexcept>{4, L"keepLocalCopy"},
       SyncMethod<::React::JSValue(std::string, std::string) noexcept>{5, L"isKnownType"},
-      Method<void(std::vector<std::string>, Promise<void>) noexcept>{6, L"releaseSecureAccess"},
-      Method<void(std::vector<std::string>, Promise<::React::JSValue>) noexcept>{7, L"releaseLongTermAccess"},
+      SyncMethod<std::optional<std::string>(std::string) noexcept>{6, L"uriToPath"},
+      Method<void(std::vector<std::string>, Promise<void>) noexcept>{7, L"releaseSecureAccess"},
+      Method<void(std::vector<std::string>, Promise<::React::JSValue>) noexcept>{8, L"releaseLongTermAccess"},
   };
 
   template <class TModule>
@@ -63,11 +64,16 @@ struct DocumentPickerWindowsSpec : winrt::Microsoft::ReactNative::TurboModuleSpe
           "    REACT_SYNC_METHOD(isKnownType) static ::React::JSValue isKnownType(std::string kind, std::string value) noexcept { /* implementation */ }\n");
     REACT_SHOW_METHOD_SPEC_ERRORS(
           6,
+          "uriToPath",
+          "    REACT_SYNC_METHOD(uriToPath) std::optional<std::string> uriToPath(std::string uri) noexcept { /* implementation */ }\n"
+          "    REACT_SYNC_METHOD(uriToPath) static std::optional<std::string> uriToPath(std::string uri) noexcept { /* implementation */ }\n");
+    REACT_SHOW_METHOD_SPEC_ERRORS(
+          7,
           "releaseSecureAccess",
           "    REACT_METHOD(releaseSecureAccess) void releaseSecureAccess(std::vector<std::string> const & uris, ::React::ReactPromise<void> &&result) noexcept { /* implementation */ }\n"
           "    REACT_METHOD(releaseSecureAccess) static void releaseSecureAccess(std::vector<std::string> const & uris, ::React::ReactPromise<void> &&result) noexcept { /* implementation */ }\n");
     REACT_SHOW_METHOD_SPEC_ERRORS(
-          7,
+          8,
           "releaseLongTermAccess",
           "    REACT_METHOD(releaseLongTermAccess) void releaseLongTermAccess(std::vector<std::string> const & uris, ::React::ReactPromise<::React::JSValue> &&result) noexcept { /* implementation */ }\n"
           "    REACT_METHOD(releaseLongTermAccess) static void releaseLongTermAccess(std::vector<std::string> const & uris, ::React::ReactPromise<::React::JSValue> &&result) noexcept { /* implementation */ }\n");
