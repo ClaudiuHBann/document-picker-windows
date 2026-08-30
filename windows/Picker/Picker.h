@@ -47,7 +47,7 @@ struct Picker
                                ::React::ReactPromise<::React::JSValue> &&aResult) noexcept;
 
   private:
-    static std::optional<std::string> UriFromPath(const hstring &aPath);
+    static std::string UriFromPath(const hstring &aPath);
 
   private:
     Windows::Foundation::IAsyncOperation<Windows::Storage::Pickers::FileOpenPicker> CreateFileOpenPicker(
